@@ -24,7 +24,7 @@ $(document).ready(function () {
     navigator.serviceWorker.addEventListener("message", (event) => {
       const { type } = event.data;
       const isSmallScreen = window.innerWidth < 500;
-      const position = isSmallScreen ? "bottom-end" : "top-end";
+      const position = isSmallScreen ? "bottom" : "top-end";
 
       if (type === "caching-started") {
         if (cachingToast) cachingToast.close();
@@ -77,7 +77,6 @@ $(document).ready(function () {
 function buttonAppInstall() {
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
   const $button = $("#installAppButton");
-  const isMobile = /android|iPhone|iPad|iPod|mobile/i.test(userAgent);
 
   if (/android/i.test(userAgent)) {
     $button.html(
@@ -3050,7 +3049,7 @@ function showToast(message, options = {}) {
   const { timer = 3000, title = "", icon } = options;
 
   const isSmallScreen = window.innerWidth < 500;
-  const position = isSmallScreen ? "bottom-end" : "top-end";
+  const position = isSmallScreen ? "bottom" : "top-end";
 
   Swal.fire({
     toast: true,
