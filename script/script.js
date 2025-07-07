@@ -77,7 +77,6 @@ $(document).ready(function () {
 function buttonAppInstall() {
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
   const $button = $("#installAppButton");
-  const isMobile = /android|iPhone|iPad|iPod|mobile/i.test(userAgent);
 
   if (/android/i.test(userAgent)) {
     $button.html(
