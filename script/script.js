@@ -1,51 +1,83 @@
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("../../sw.js").catch(function (err) {
-    console.error("Falha ao registrar sw.js:", err);
-  });
-}
-
-let countInstallApp = 0;
-
-if ("serviceWorker" in navigator && "PushManager" in window) {
-  window.addEventListener("beforeinstallprompt", (e) => {
-    $("#installApp").css("display", "flex").show();
-    e.preventDefault();
-    let deferredPrompt = e;
-    const installButton = document.getElementById("installAppButton");
-    if (installButton !== null) {
+$(document).ready(function () {
+  if ("serviceWorker" in navigator) {
+    let deferredPrompt;
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      $("#installApp").css("display", "flex").show();
       buttonAppInstall();
-      $("#installAppButton").on("click", function () {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === "accepted") {
-            console.log("Instalação do app aceita pelo usuário.");
-          } else {
-            console.info("Usuário dispensou a instalação do app.");
-          }
-          deferredPrompt = null;
-        });
-        countInstallApp++;
-        $("#installApp").hide();
+    });
+
+    $("#installAppButton").on("click", function () {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === "accepted") {
+          $("#installApp").hide();
+        }
+        deferredPrompt = null;
       });
-    }
-    if (countInstallApp > 0) {
-      $("#installApp").hide();
-    }
-  });
-}
+    });
+
+    let cachingToast = null;
+
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      const { type } = event.data;
+      const isSmallScreen = window.innerWidth < 500;
+      const position = isSmallScreen ? "bottom-end" : "top-end";
+
+      if (type === "caching-started") {
+        if (cachingToast) cachingToast.close();
+        cachingToast = Swal.fire({
+          toast: true,
+          position: position,
+          icon: "info",
+          title: '<i class="fas fa-download"></i> Atualizando recursos...',
+          text: "Isso tornará o jogo mais rápido e disponível sem internet.",
+          showConfirmButton: false,
+          allowEscapeKey: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+      }
+
+      if (type === "caching-complete") {
+        if (cachingToast) cachingToast.close();
+        Swal.fire({
+          toast: true,
+          position: position,
+          icon: "success",
+          title: "Recursos offline prontos!",
+          showConfirmButton: false,
+          timer: 3000,
+        });
+      }
+
+      if (type === "caching-failed") {
+        if (cachingToast) cachingToast.close();
+        Swal.fire({
+          toast: true,
+          position: position,
+          icon: "error",
+          title: "Falha ao baixar recursos offline.",
+          html: "O jogo pode não funcionar corretamente sem conexão.",
+          showConfirmButton: true,
+          confirmButtonText: "Fechar",
+        });
+      }
+    });
+
+    navigator.serviceWorker.register("/sw.js").catch(function (err) {
+      console.error("Falha ao registrar sw.js:", err);
+    });
+  }
+});
 
 function buttonAppInstall() {
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
   const $button = $("#installAppButton");
-  const $linkMobile = $("#linkMobile");
-  const $linkDesktop = $("#linkDesktop");
   const isMobile = /android|iPhone|iPad|iPod|mobile/i.test(userAgent);
-
-  if (isMobile) {
-    $linkDesktop.css("display", "none");
-  } else {
-    $linkMobile.css("display", "none");
-  }
 
   if (/android/i.test(userAgent)) {
     $button.html(
@@ -620,10 +652,10 @@ $("#create-game-btn").on("click", function () {
     });
     return;
   }
-  
+
   saveLobbySettings();
   mostrarLoading();
-  const gameId = Math.random().toString(36).substr(2, 5).toUpperCase(); 
+  const gameId = Math.random().toString(36).substr(2, 5).toUpperCase();
   initializeGameInFirebase(gameId);
 });
 
@@ -883,50 +915,59 @@ function initializeGameInFirebase(gameId) {
 }
 
 function getGameConfiguration(players, teams) {
-    const playerCount = Object.values(players || {}).filter(p => p.id).length;
-    const teamMembers = {};
-    Object.values(teams || {}).forEach(team => {
-        if (team.members && team.members.length > 0) {
-            teamMembers[team.id] = team.members.length;
-        }
-    });
-
-    const teamCount = Object.keys(teamMembers).length;
-    const teamSizes = Object.values(teamMembers);
-
-    if (teamCount === 0 || teamSizes.length === 0) return { canStart: false };
-
-    const isBalanced = teamSizes.every(size => size === teamSizes[0]);
-    if (!isBalanced) return { canStart: false };
-
-    const playersPerTeam = teamSizes[0];
-    if (playerCount !== teamCount * playersPerTeam) return { canStart: false };
-
-    const validModes = {
-        2: [{ numTeams: 2, playersPerTeam: 1 }],
-        3: [{ numTeams: 3, playersPerTeam: 1 }],
-        4: [{ numTeams: 2, playersPerTeam: 2 }],
-        6: [{ numTeams: 2, playersPerTeam: 3 }, { numTeams: 3, playersPerTeam: 2 }],
-        8: [{ numTeams: 2, playersPerTeam: 4 }],
-        9: [{ numTeams: 3, playersPerTeam: 3 }],
-        10: [{ numTeams: 2, playersPerTeam: 5 }],
-        12: [{ numTeams: 2, playersPerTeam: 6 }, { numTeams: 3, playersPerTeam: 4 }],
-    };
-
-    if (validModes[playerCount]) {
-        for (const mode of validModes[playerCount]) {
-            if (mode.numTeams === teamCount && mode.playersPerTeam === playersPerTeam) {
-                return {
-                    canStart: true,
-                    playerCount: playerCount,
-                    numTeams: teamCount,
-                    playersPerTeam: playersPerTeam
-                };
-            }
-        }
+  const playerCount = Object.values(players || {}).filter((p) => p.id).length;
+  const teamMembers = {};
+  Object.values(teams || {}).forEach((team) => {
+    if (team.members && team.members.length > 0) {
+      teamMembers[team.id] = team.members.length;
     }
+  });
 
-    return { canStart: false };
+  const teamCount = Object.keys(teamMembers).length;
+  const teamSizes = Object.values(teamMembers);
+
+  if (teamCount === 0 || teamSizes.length === 0) return { canStart: false };
+
+  const isBalanced = teamSizes.every((size) => size === teamSizes[0]);
+  if (!isBalanced) return { canStart: false };
+
+  const playersPerTeam = teamSizes[0];
+  if (playerCount !== teamCount * playersPerTeam) return { canStart: false };
+
+  const validModes = {
+    2: [{ numTeams: 2, playersPerTeam: 1 }],
+    3: [{ numTeams: 3, playersPerTeam: 1 }],
+    4: [{ numTeams: 2, playersPerTeam: 2 }],
+    6: [
+      { numTeams: 2, playersPerTeam: 3 },
+      { numTeams: 3, playersPerTeam: 2 },
+    ],
+    8: [{ numTeams: 2, playersPerTeam: 4 }],
+    9: [{ numTeams: 3, playersPerTeam: 3 }],
+    10: [{ numTeams: 2, playersPerTeam: 5 }],
+    12: [
+      { numTeams: 2, playersPerTeam: 6 },
+      { numTeams: 3, playersPerTeam: 4 },
+    ],
+  };
+
+  if (validModes[playerCount]) {
+    for (const mode of validModes[playerCount]) {
+      if (
+        mode.numTeams === teamCount &&
+        mode.playersPerTeam === playersPerTeam
+      ) {
+        return {
+          canStart: true,
+          playerCount: playerCount,
+          numTeams: teamCount,
+          playersPerTeam: playersPerTeam,
+        };
+      }
+    }
+  }
+
+  return { canStart: false };
 }
 
 function joinGame(gameId, playerName) {
@@ -976,10 +1017,7 @@ function joinGame(gameId, playerName) {
           } else {
             const playerCount = Object.keys(gameDataTx.players || {}).length;
             const capacity = gameDataTx.capacity || 12;
-            if (
-              playerCount >= capacity &&
-              gameDataTx.gameState !== "playing"
-            ) {
+            if (playerCount >= capacity && gameDataTx.gameState !== "playing") {
               return;
             }
             if (
@@ -1806,12 +1844,12 @@ function hostStartGame() {
 
       if (!gameConfig.canStart) {
         console.warn("Host tentou iniciar partida em estado inválido.");
-        return; 
+        return;
       }
 
       gameData.playerCount = gameConfig.playerCount;
       gameData.numTeams = gameConfig.numTeams;
-      
+
       gameData.gameState = "playing";
       gameData.rematchVotes = {};
 
@@ -1844,9 +1882,12 @@ function hostStartGame() {
       gameData.turnOrder = newTurnOrder;
 
       gameData.currentPlayerIndex = 0;
-      
-      if (gameData.rematchVotes && Object.keys(gameData.rematchVotes).length > 0) {
-        const firstPlayer = gameData.turnOrder.shift(); 
+
+      if (
+        gameData.rematchVotes &&
+        Object.keys(gameData.rematchVotes).length > 0
+      ) {
+        const firstPlayer = gameData.turnOrder.shift();
         gameData.turnOrder.push(firstPlayer);
       }
 
@@ -2081,7 +2122,14 @@ function updateGameInfo(gameData) {
 
   $("#team-info").empty();
 
-  if (playerCount && numTeams && myTeamId && teams && teams[myTeamId] && players) {
+  if (
+    playerCount &&
+    numTeams &&
+    myTeamId &&
+    teams &&
+    teams[myTeamId] &&
+    players
+  ) {
     const myTeam = teams[myTeamId];
     let teamInfoHtml = "";
 
@@ -2161,7 +2209,8 @@ function updateGameInfo(gameData) {
 
   if (
     gameData.turnState !== "drawing" ||
-    (gameData.turnOrder && gameData.turnOrder[gameData.currentPlayerIndex] !== myPlayerId)
+    (gameData.turnOrder &&
+      gameData.turnOrder[gameData.currentPlayerIndex] !== myPlayerId)
   ) {
     $("#game-message").html(finalMessage);
   }
@@ -2378,7 +2427,7 @@ function resetForRematchSelection() {
       gameData.turnState = "playing";
       gameData.playerCount = null;
       gameData.numTeams = null;
- Object.values(gameData.players).forEach((player) => {
+      Object.values(gameData.players).forEach((player) => {
         player.hand = [];
       });
 

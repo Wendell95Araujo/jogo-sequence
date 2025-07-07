@@ -1,3 +1,16 @@
+function sendMessageToClients(message) {
+  self.clients
+    .matchAll({ type: "window", includeUncontrolled: true })
+    .then((clients) => {
+      if (!clients || clients.length === 0) {
+        console.warn("Nenhum cliente ativo para receber mensagens.");
+      }
+      clients.forEach((client) => {
+        client.postMessage(message);
+      });
+    });
+}
+
 const CACHE_NAME = "tasks-cache-v1.0.0";
 const LOCAL_FILES = [
   "/",
@@ -84,31 +97,30 @@ for (let i = 1; i <= TOTAL_AVATARS; i++) {
   avatarPaths.push(`https://api.dicebear.com/8.x/adventurer/svg?seed=${i}`);
 }
 
-avatarPaths.push('/assets/img/avatars/bot-red.png');
-avatarPaths.push('/assets/img/avatars/bot-blue.png');
-avatarPaths.push('/assets/img/avatars/bot-green.png');
+avatarPaths.push("/assets/img/avatars/bot-red.png");
+avatarPaths.push("/assets/img/avatars/bot-blue.png");
+avatarPaths.push("/assets/img/avatars/bot-green.png");
 
-const FILES_TO_CACHE = [...LOCAL_FILES, ...EXTERNAL_LIBS, ...imagePaths, ...avatarPaths];
+const FILES_TO_CACHE = [
+  ...LOCAL_FILES,
+  ...EXTERNAL_LIBS,
+  ...imagePaths,
+  ...avatarPaths,
+];
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log("Service Worker: Cacheando arquivos para uso offline.");
-
-      return cache.addAll(FILES_TO_CACHE).catch((error) => {
-        console.error("Falha ao usar cache.addAll. Verifique as URLs.", error);
-        FILES_TO_CACHE.forEach((url) => {
-          fetch(url)
-            .then((res) => {
-              if (!res.ok)
-                console.error("Falha no fetch individual para: ", url);
-            })
-            .catch((err) =>
-              console.error("Erro de rede no fetch individual para: ", url, err)
-            );
+      sendMessageToClients({ type: "caching-started" });
+      return cache
+        .addAll(FILES_TO_CACHE)
+        .then(() => {
+          sendMessageToClients({ type: "caching-complete" });
+        })
+        .catch((error) => {
+          sendMessageToClients({ type: "caching-failed" });
         });
-      });
     })
   );
 });
@@ -119,7 +131,6 @@ self.addEventListener("activate", (event) => {
       return Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
-            console.log("Service Worker: Deletando cache antigo:", cache);
             return caches.delete(cache);
           }
         })
