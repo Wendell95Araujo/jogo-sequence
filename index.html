@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="description"
+      content="Jogue Sequence Online com até 12 jogadores! Um jogo de tabuleiro multiplayer gratuito para jogar com amigos ou contra outros online. Crie salas, entre por código ou entre em partidas aleatórias."
+    />
+    <title>
+      Sequence Online – Jogo de Tabuleiro Multiplayer (2 a 12 Jogadores)
+    </title>
+    <meta name="theme-color" content="#4d6a95" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="PWA Workshop" />
+    <meta name="apple-mobile-web-app-title" content="PWA Workshop" />
+    <meta name="msapplication-starturl" content="/index.html" />
+    <!-- Open Graph Meta Tags -->
+    <meta
+      property="og:title"
+      content="Sequence Online – Jogo de Tabuleiro Multiplayer (2 a 12 Jogadores)"
+    />
+    <meta
+      property="og:description"
+      content="Jogue Sequence Online com até 12 jogadores! Um jogo de tabuleiro multiplayer gratuito para jogar com amigos ou online. Simples, divertido e direto do navegador."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://game-sequence-multiplayer.vercel.app/"
+    />
+    <meta
+      property="og:image"
+      content="https://game-sequence-multiplayer.vercel.app/assets/img/thumb.png"
+    />
+    <meta property="og:site_name" content="Sequence Online" />
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Sequence Online – Jogo Multiplayer até 12 Jogadores"
+    />
+    <meta
+      name="twitter:description"
+      content="Crie partidas, entre por código ou jogue aleatoriamente! Jogo de tabuleiro multiplayer gratuito direto do navegador."
+    />
+    <meta
+      name="twitter:image"
+      content="https://game-sequence-multiplayer.vercel.app/assets/img/thumb.png"
+    />
+    <link rel="apple-touch-icon" sizes="57x57" href="ios/57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="ios/60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="ios/72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="ios/76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="ios/114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="ios/120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="ios/144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="ios/152.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="ios/512.png" />
+    <link rel="shortcut icon" href="assets/img/logo.png" />
+    <link rel="stylesheet" href="style/reset.css" />
+    <link rel="stylesheet" href="style/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+      href="lib/fontawesome-pro-6.7.2-web/css/all.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script
+      type="application/javascript"
+      src="script/firebaseConfig.js"
+    ></script>
+    <script
+      async
+      src="https://cdn.jsdelivr.net/npm/pwacompat@2.0.8/pwacompat.min.js"
+      integrity="sha384-uONtBTCBzHKF84F6XvyC8S0gL8HTkAPeCyBNvfLfsqHh+Kd6s/kaS4BdmNQ5ktp1"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="loading">
+      <div class="spinner">
+        <div class="icon red"><i class="fas fa-heart"></i></div>
+        <div class="red"><i class="fas fa-bars-sort"></i></div>
+        <div class="black">
+          <i class="fas fa-bars-sort fa-flip-horizontal"></i>
+        </div>
+        <div class="icon black"><i class="fas fa-spade"></i></div>
+        <div class="black"><i class="fas fa-bars-sort"></i></div>
+        <div class="red">
+          <i class="fas fa-bars-sort fa-flip-horizontal"></i>
+        </div>
+        <div class="icon red"><i class="fas fa-diamond"></i></div>
+        <div class="red"><i class="fas fa-bars-sort"></i></div>
+        <div class="black">
+          <i class="fas fa-bars-sort fa-flip-horizontal"></i>
+        </div>
+        <div class="icon black"><i class="fas fa-club"></i></div>
+        <div class="black"><i class="fas fa-bars-sort"></i></div>
+        <div class="red">
+          <i class="fas fa-bars-sort fa-flip-horizontal"></i>
+        </div>
+      </div>
+    </div>
+
+    <div id="help-btn">
+      <i class="far fa-circle-info"></i>
+      <span>regras</span>
+    </div>
+
+    <div id="lobby">
+      <h1 id="title">Sequence Online</h1>
+      <h2 id="lobby-title">Lobby do jogo</h2>
+
+      <div id="name-options" class="options">
+        <label for="player-name-input" class="small">Nome e Avatar:</label>
+        <div class="avatar-selector">
+          <div id="avatar-dropdown-container" class="avatar-dropdown">
+            <input
+              type="text"
+              id="player-name-input"
+              placeholder="Digite seu nome"
+              aria-label="Digite seu nome"
+            />
+            <div id="avatar-dropdown-selected" class="avatar-dropdown-selected" aria-label="Selecione seu avatar">
+              <img
+                src="https://api.dicebear.com/8.x/adventurer/svg?seed=1"
+                class="avatar-option"
+                data-avatar-id="1"
+              />
+              <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div id="avatar-dropdown-panel" class="avatar-dropdown-panel">
+            </div>
+          </div>
+        </div>
+      </div>      
+
+      <div id="online-options">
+        <label for="online-label" id="online-label"><strong>Modo online</strong></label>
+        <button id="create-game-btn" title="Criar uma sala">Criar sala</button>
+        <div id="join-game-options">
+          <input type="text" id="game-id-input" placeholder="Código da sala" />
+          <button id="join-game-btn" title="Entrar em uma sala">
+            Entrar na sala
+          </button>
+        </div>
+        <button id="find-random-game-btn" title="Entrar em uma partida aleatória">
+          Entrar em partida aleatória
+        </button>
+        <div id="server-info">
+          <span id="player-online-count"></span>
+          <span id="active-games-count"></span>
+        </div>
+      </div>
+
+      <div id="practice-game-options">
+        <label for="practice-label" id="practice-label"><strong>Modo Treino</strong></label>
+
+        <div id="game-mode-options" class="options">
+        <label for="player-count-select" class="small">Modo de jogo:</label>
+        <select id="player-count-select" aria-label="Modo de jogo">
+          <option value="0" selected disabled>Selecione o modo de jogo</option>
+          <option value="2.2">2 Jogadores (1 vs 1)</option>
+          <option value="3.3">3 Jogadores (1 vs 1 vs 1)</option>
+          <option value="4.2">4 Jogadores (2 vs 2)</option>
+          <option value="6.3">6 Jogadores (2 vs 2 vs 2)</option>
+          <option value="6.2">6 Jogadores (3 vs 3)</option>
+          <option value="8.2">8 Jogadores (4 vs 4)</option>
+          <option value="9.3">9 Jogadores (3 vs 3 vs 3)</option>
+          <option value="10.2">10 Jogadores (5 vs 5)</option>
+          <option value="12.2">12 Jogadores (6 vs 6)</option>
+          <option value="12.3">12 Jogadores (4 vs 4 vs 4)</option>
+        </select>
+      </div>
+
+        <div id="difficulty-options" class="options">
+          <label for="difficulty-select" class="small">Dificuldade:</label>
+          <select id="difficulty-select" aria-label="Dificuldade">
+            <option value="0" selected disabled>Selecione a dificuldade</option>
+            <option value="easy">Fácil</option>
+            <option value="medium">Médio</option>
+            <option value="hard">Difícil</option>
+            <option value="expert">Especialista</option>
+          </select>
+        </div>
+        <button id="start-practice-btn" title="Novo jogo contra bots">
+          Novo jogo contra bots
+        </button>
+        <button id="join-practice-btn" title="Continuar jogo contra bots">
+          Continuar jogo contra bots
+        </button>
+      </div>
+
+      <div id="installApp">
+        <button
+          id="installAppButton"
+          title="Instale o aplicativo"
+          aria-label="Instalar app"
+          title="Instalar app"
+        ></button>
+      </div>
+      <div class="connection-status-container">
+        <div id="connection-status"></div>
+        <div id="connection-status-info"></div>
+      </div>
+      <div class="footer-lobby">
+       <a href="https://wendell-araujo.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="assets/img/logo-wa.webp" alt="Logo do deseenvolvedor Wendell Araujo Dev" width="40"></a> 
+        <span>Desenvolvido por Wendell Araujo Dev</span>
+      </div>
+    </div>
+
+    <div id="game-container" style="display: none">
+      <div id="board-area">
+        <div class="board-side-text left">
+          <div class="jack-container one-eye-jack-container">
+            <div class="one-eye-jack js"></div>
+            <span class="jack-text">um olho removem</span>
+            <div class="one-eye-jack jh"></div>
+          </div>
+          <span class="sequence-text">SEQUENCE</span>
+          <div class="jack-container two-eye-jack-container">
+            <div class="two-eye-jack jc"></div>
+            <span class="jack-text">dois olhos adicionam</span>
+            <div class="two-eye-jack jd"></div>
+          </div>
+        </div>
+
+        <div id="board"></div>
+
+        <div class="board-side-text right">
+          <div class="jack-container one-eye-jack-container">
+            <div class="one-eye-jack js"></div>
+            <span class="jack-text">um olho removem</span>
+            <div class="one-eye-jack jh"></div>
+          </div>
+          <span class="sequence-text">SEQUENCE</span>
+          <div class="jack-container two-eye-jack-container">
+            <div class="two-eye-jack jc"></div>
+            <span class="jack-text">dois olhos adicionam</span>
+            <div class="two-eye-jack jd"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="player-info">
+        <div class="persistent-game-info" style="display: none">
+          <div>
+            Sala: <strong class="game-id-text"></strong>
+            <button class="copy-id-btn" title="Copiar código da sala">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+          <button class="toggle-sound-btn" title="Desativar som">
+            <i class="fas fa-volume-high"></i>
+          </button>
+          <button class="report-bug-btn" title="Reportar um Bug">
+            <i class="fas fa-bug"></i>
+          </button>
+          <button class="help-btn" title="Regras do jogo">
+            <i class="far fa-circle-info"></i>
+          </button>
+          <button class="leave-game-btn" title="Sair do jogo">
+            <i class="fas fa-right-from-bracket"></i>
+          </button>
+        </div>
+
+        <h2 id="current-player-text">Aguardando...</h2>
+
+        <p id="game-message">Bem-vindo ao Sequence!</p>
+        <div id="team-info"></div>
+
+        <h3 class="hand-title">Sua Mão:</h3>
+        <div class="cards-container">
+          <div id="player-hand"></div>
+          <div class="deck-discard-container">
+            <div id="deck-container">
+              <div id="deck-pile" title="Comprar carta"></div>
+              <span id="deck-count"></span>
+            </div>
+            <div id="discard-container">
+              <div id="discard-pile" title="Última carta jogada"></div>
+              <span id="discard-count">Descarte</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="chat-container">
+      <div class="chat-header">
+        <h3>Chat do Jogo</h3>
+        <button id="hide-chat-btn" title="Fechar chat">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+      <div id="chat-messages"></div>
+      <div id="chat-input-area">
+        <input
+          type="text"
+          id="chat-input"
+          placeholder="Digite sua mensagem..."
+        />
+        <button id="send-chat-btn" title="Enviar mensagem">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+    <div class="chat-btn-container">
+      <button id="show-chat-btn" title="Abrir chat">
+        <i class="fas fa-message"></i> Chat
+      </button>
+    </div>
+
+    <div id="team-selection-modal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <div class="persistent-game-info">
+          <div>
+            Sala: <strong class="game-id-text"></strong>
+            <button class="copy-id-btn" title="Copiar código da sala">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+          <button class="toggle-sound-btn" title="Desativar som">
+            <i class="fas fa-volume-high"></i>
+          </button>
+          <button class="report-bug-btn" title="Reportar um Bug">
+            <i class="fas fa-bug"></i>
+          </button>
+          <button class="help-btn" title="Regras do jogo">
+            <i class="far fa-circle-info"></i>
+          </button>
+          <button class="leave-game-btn" title="Sair da sala">
+            <i class="fas fa-right-from-bracket"></i>
+          </button>
+        </div>
+        <h2>Escolha sua Equipe</h2>
+        <div class="player-count-info"></div>
+        <p>
+          Os jogadores devem se dividir entre as equipes. O anfitrião iniciará a
+          partida quando as equipes estiverem completas e balanceadas.
+        </p>
+        <div id="teams-container"></div>
+        <div id="start-game-container"></div>
+      </div>
+    </div>
+    <script src="script/script.js"></script>
+    <script src="script/botGameLocal.js"></script>
+  </body>
+</html>
