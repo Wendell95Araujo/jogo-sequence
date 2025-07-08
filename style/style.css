@@ -964,7 +964,7 @@ button:disabled {
 .cards-container {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  gap: 5px;
   margin-top: 5px;
 }
 
@@ -1530,17 +1530,23 @@ button:disabled {
 /* ===== Modal Escolha de Equipe ===== */
 #team-selection-modal .modal-content {
   width: 600px;
-  max-width: calc(90vw - 40px);
+  max-width: calc(90vw - 20px);
+  max-height: 90vh;
   background-color: #fefefe;
-  margin: 10% auto;
-  padding: 20px;
-  border: 1px solid #888;
+  margin: 0 auto;
+  padding: 10px;
   border-radius: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: auto;
 
   h2 {
     color: var(--color-secondary);
     font-weight: bold;
+    margin-top: 10px;
   }
 
   .player-count-info {
@@ -1567,6 +1573,8 @@ button:disabled {
   gap: 15px;
   justify-content: center;
   margin-top: 20px;
+  max-height: 420px;
+  overflow-y: auto;
 }
 
 .team-box {
@@ -2026,7 +2034,7 @@ button:disabled {
   }
 
   #player-hand {
-    padding: 10px 5px;
+    padding: 10px 0;
     gap: 5px;
   }
 
@@ -2167,15 +2175,15 @@ button:disabled {
   }
 
   .card-in-hand {
-    width: 25px;
-    height: 45px;
+    width: 28px;
+    height: 50px;
     border-radius: 4px;
     background-size: 450%;
   }
 
   #deck-pile {
-    width: 40px;
-    height: 61px;
+    width: 50px;
+    height: 70px;
   }
 
   #discard-pile {
