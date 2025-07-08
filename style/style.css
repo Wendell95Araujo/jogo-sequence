@@ -56,6 +56,13 @@ em {
   font-style: italic;
 }
 
+.text-success {
+  color: var(--color-secondary) !important;
+}
+.text-muted {
+  color: var(--color-blue-light) !important;
+}
+
 /* ===== Loading ===== */
 .loading {
   display: flex;
@@ -185,6 +192,18 @@ em {
   min-height: 95vh;
   height: 98vh;
 
+  #title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    .logo-title {
+      width: 50px;
+      height: 50px;
+    }
+  }
+
   hr {
     width: 100%;
     margin: 0;
@@ -220,12 +239,12 @@ em {
     }
   }
 
-  .connection-status-container{
+  .connection-status-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    flex:1;
+    flex: 1;
   }
 
   #connection-status {
@@ -302,7 +321,7 @@ em {
       display: flex;
       flex-direction: column;
       gap: 5px;
-      margin-top: 10px;
+      margin: 5px auto;
     }
   }
 
@@ -315,7 +334,7 @@ em {
 
   #online-options {
     border-top: 1px solid white;
-    padding-top: 10px;
+    padding: 10px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -343,7 +362,8 @@ em {
 
   #practice-game-options {
     border-top: 1px solid white;
-    padding-top: 10px;
+    border-bottom: 1px solid white;
+    padding: 10px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -357,6 +377,10 @@ em {
 
   #find-random-game-btn {
     margin-top: 5px;
+  }
+
+  #config-options {
+    margin-top: 5px !important;
   }
 
   span {
@@ -404,9 +428,13 @@ em {
     cursor: pointer;
     transition: border-color 0.2s;
     width: 50px;
+
+    &.active {
+      border-color: var(--color-secondary);
+    }
   }
 
-  .avatar-dropdown-selected .avatar-option {
+  .avatar-dropdown-selected #avatar-option {
     width: 25px;
     height: 25px;
     border-radius: 50%;
@@ -462,7 +490,7 @@ em {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 5px;
 
     img {
       width: 40px;
@@ -483,11 +511,11 @@ em {
 }
 
 #help-btn {
-  position: fixed;
+  position: absolute;
   top: 20px;
   right: 20px;
   display: flex;
-  flex-direction: column;
+  flex-direction: column !important;
   gap: 8px;
   width: fit-content;
   cursor: pointer;
@@ -497,6 +525,7 @@ em {
   padding: 8px;
   border-radius: 8px;
   border: 2px solid white;
+  width: fit-content !important;
 
   span {
     font-weight: bold;
@@ -1327,7 +1356,43 @@ button:disabled {
 
 .swal2-rules-container .swal2-title {
   text-align: center;
-  font-size: 1.5em !important;
+  font-size: 1.25em !important;
+}
+
+.swal2-modal-config-popup .swal2-title {
+  text-align: center !important;
+  font-size: 1.25em !important;
+}
+
+.modal-config-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  .modal-config-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 20px;
+    width: 100%;
+
+    label {
+      font-weight: bold;
+      text-align: center;
+    }
+
+    button {
+      background-color: transparent !important;
+      color: var(--color-secondary) !important;
+      border: 1px solid var(--color-secondary) !important;
+      font-weight: bold !important;
+      width: 100% !important;
+      max-width: 240px !important;
+    }
+  }
 }
 
 .swal2-cancel,
@@ -1349,6 +1414,14 @@ button:disabled {
 
 .swal2-button-full {
   width: 100% !important;
+}
+
+.swal2-actions.center {
+  justify-content: center !important;
+  button {
+    width: 100% !important;
+    max-width: 240px !important;
+  }
 }
 
 .swal2-input-container {
@@ -1407,6 +1480,11 @@ button:disabled {
 
 .swal2-timer-progress-bar {
   background-color: var(--color-secondary);
+}
+
+.swal2-loader {
+  border-color: var(--color-secondary) transparent var(--color-secondary)
+    transparent !important;
 }
 
 .swal2-icon {
@@ -1847,7 +1925,7 @@ button:disabled {
 }
 
 /* ===== Responsividade ===== */
-@media screen and (max-width: 1400px) {
+@media screen and (max-width: 1415px) {
   #player-info {
     width: 400px;
     position: unset;
@@ -1867,7 +1945,7 @@ button:disabled {
   }
 }
 
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1250px) {
   #game-container {
     flex-direction: column-reverse;
     align-items: center;
@@ -1986,7 +2064,7 @@ button:disabled {
 
 @media screen and (max-width: 500px) {
   h1 {
-    margin: 10px auto;
+    margin: 20px auto 10px;
     font-size: 1.5em;
   }
 
@@ -1999,6 +2077,25 @@ button:disabled {
     font-size: 1.125em;
   }
 
+  #title {
+    justify-content: center !important;
+
+    .logo-title {
+      &.right {
+        display: none;
+      }
+
+      &.left {
+        display: block;
+        position: absolute;
+        left: 5px;
+        top: 5px;
+        width: 60px;
+        height: 60px;
+      }
+    }
+  }
+
   #lobby {
     width: 90%;
     input {
@@ -2008,11 +2105,6 @@ button:disabled {
     button {
       width: 100%;
     }
-
-    .avatar-dropdown-panel {
-      width: 100% !important;
-      max-width: 100% !important;
-    }
   }
 
   #lobby div {
@@ -2021,7 +2113,7 @@ button:disabled {
   }
 
   #help-btn {
-    top: 5px;
+    top: 10px;
     right: 5px;
     font-size: 1em;
   }

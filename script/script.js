@@ -125,22 +125,28 @@ const MIN_CARDS_IN_HAND = {
   12: 3,
 };
 const RECONNECTION_GRACE_PERIOD_MS = 30000;
-const drawOrDefeatSound = new Audio(
-  `${window.location.origin}/assets/sounds/drawOrDefeat.wav`
-);
-const madeSequenceSound = new Audio(
-  `${window.location.origin}/assets/sounds/madeSequence.wav`
-);
-const myTurnSound = new Audio(
-  `${window.location.origin}/assets/sounds/myTurn.mp3`
-);
-const newChatSound = new Audio(
-  `${window.location.origin}/assets/sounds/newChat.mp3`
-);
-const winnerSound = new Audio(
-  `${window.location.origin}/assets/sounds/winner.wav`
-);
+const drawOrDefeatSound = new Audio(`${window.location.origin}/assets/sounds/drawOrDefeat.wav`);
+const sequenceSuccessSound = new Audio(`${window.location.origin}/assets/sounds/madeSequence.wav`);
+const myTurnSound = new Audio(`${window.location.origin}/assets/sounds/myTurn.mp3`);
+const newMessageSound = new Audio(`${window.location.origin}/assets/sounds/newChat.mp3`);
+const winnerSound = new Audio(`${window.location.origin}/assets/sounds/winner.wav`);
+
+const isVibrationAvailable = () => {
+  return "vibrate" in navigator;
+};
+
+const vibrationPatterns = {
+  myTurn: [200, 100, 200],
+  sequenceSuccess: [50, 75, 50, 75, 150],
+  newMessage: [100],
+  victory: [50, 50, 100, 50, 150, 50, 250],
+  defeat: [500, 200, 200],
+  draw: [250, 150, 250],
+  cliqueConfig: [75],
+};
+
 const MUTE_STORAGE_KEY = "sequenceGameMuted";
+const VIBRATION_STORAGE_KEY = "sequenceGameVibrationOff";
 const NICKNAME_STORAGE_KEY = "sequenceGameNickname";
 const GAMEMODE_STORAGE_KEY = "sequenceGameMode";
 const BOT_DIFFICULTY_STORAGE_KEY = "sequenceGameBotDifficulty";
@@ -159,8 +165,9 @@ let previousPlayersState = {};
 let isLocalGame = false;
 let isInitialLoad = true;
 let previousGameData = {};
-let hasPlayedNewChatSound = false;
+let hasPlayedNewMessageSound = false;
 let isMuted = false;
+let isVibratingOff = false;
 let isReconnecting = false;
 let amITheHost = false;
 let selectedAvatarId = 1;
@@ -193,6 +200,7 @@ function initializeAvatarSelector() {
 
 $("#avatar-dropdown-selected").on("click", function (event) {
   event.stopPropagation();
+  $(this).toggleClass("active");
   $("#avatar-dropdown-container").toggleClass("open");
 });
 
@@ -203,12 +211,16 @@ $("#avatar-dropdown-panel").on("click", ".avatar-option", function () {
   $(this).addClass("selected-avatar");
   localStorage.setItem(AVATAR_STORAGE_KEY, selectedAvatarId);
   $("#avatar-dropdown-container").removeClass("open");
+  $("#avatar-dropdown-selected").removeClass("active");
 });
 
-// 3. Fechar o dropdown se clicar em qualquer outro lugar da página
 $(document).on("click", function () {
   if ($("#avatar-dropdown-container").hasClass("open")) {
     $("#avatar-dropdown-container").removeClass("open");
+  }
+
+  if ($("#avatar-dropdown-selected").hasClass("active")) {
+    $("#avatar-dropdown-selected").removeClass("active");
   }
 });
 
@@ -302,13 +314,13 @@ function initializeApp() {
         "Você está offline. Apenas o modo de prática está disponível.",
     });
     checkUrlForGame();
-    initializeSoundState();
+    initializeConfigState();
     return;
   }
 
   attemptToConnect(true);
   checkUrlForGame();
-  initializeSoundState();
+  initializeConfigState();
 }
 
 window.addEventListener("offline", () => {
@@ -325,34 +337,62 @@ window.addEventListener("online", () => {
 
 initializeApp();
 
-function updateSoundButtonIcon() {
-  const $icons = $(".toggle-sound-btn i");
+function updateSoundButtonUI() {
+  const $button = $(".toggle-sound-btn");
+  const $text = $button.find("span");
+  const $labelIcon = $button.siblings("label").find("i");
+
   if (isMuted) {
-    $icons.removeClass("fa-volume-high").addClass("fa-volume-xmark");
-    $(".toggle-sound-btn").attr("title", "Ativar som");
+    $text.text("Desligado");
+    $button.attr("title", "Clique para ativar o som");
+    $labelIcon
+      .removeClass("fa-volume-high")
+      .addClass("fa-volume-xmark")
+      .removeClass("text-success")
+      .addClass("text-muted");
   } else {
-    $icons.removeClass("fa-volume-xmark").addClass("fa-volume-high");
-    $(".toggle-sound-btn").attr("title", "Desativar som");
+    $text.text("Ligado");
+    $button.attr("title", "Clique para desligar o som");
+    $labelIcon
+      .removeClass("fa-volume-xmark")
+      .addClass("fa-volume-high")
+      .removeClass("text-muted")
+      .addClass("text-success");
   }
 }
 
-$(".toggle-sound-btn").on("click", function () {
-  isMuted = !isMuted;
-  localStorage.setItem(MUTE_STORAGE_KEY, isMuted);
-  updateSoundButtonIcon();
-  if (!isMuted) playAudio(myTurnSound);
-  showToast(isMuted ? "Som desativado" : "Som ativado", {
-    icon: "info",
-    timer: 1500,
-  });
-});
+function updateVibrationButtonUI() {
+  const $button = $(".toggle-vibrate-btn");
+  const $text = $button.find("span");
+  const $labelIcon = $button.siblings("label").find("i");
 
-initializeSoundState();
+  if (!isVibrationAvailable()) {
+    $button.prop("disabled", true);
+    $text.text("Indisponível");
+    $button.attr("title", "Seu dispositivo não oferece suporte à vibração");
+    $labelIcon.removeClass("text-success").addClass("text-muted");
+    return;
+  }
 
-function initializeSoundState() {
+  if (isVibratingOff) {
+    $text.text("Desligada");
+    $button.attr("title", "Clique para ativar a vibração");
+    $labelIcon.removeClass("text-success").addClass("text-muted");
+  } else {
+    $text.text("Ligada");
+    $button.attr("title", "Clique para desativar a vibração");
+    $labelIcon.removeClass("text-muted").addClass("text-success");
+  }
+}
+
+initializeConfigState();
+
+function initializeConfigState() {
   const savedMuteState = localStorage.getItem(MUTE_STORAGE_KEY);
+  const savedVibrateState = localStorage.getItem(VIBRATION_STORAGE_KEY);
+
   isMuted = savedMuteState === "true";
-  updateSoundButtonIcon();
+  isVibratingOff = savedVibrateState === "true";
 }
 
 function playAudio(audioElement, varyPitch = false) {
@@ -368,6 +408,16 @@ function playAudio(audioElement, varyPitch = false) {
   audioElement.play().catch((error) => {
     console.error("A reprodução de áudio foi impedida pelo navegador:", error);
   });
+}
+
+function triggerVibration(patternName) {
+  if (
+    !isVibratingOff &&
+    "vibrate" in navigator &&
+    vibrationPatterns[patternName]
+  ) {
+    navigator.vibrate(vibrationPatterns[patternName]);
+  }
 }
 
 function saveLobbySettings() {
@@ -612,7 +662,7 @@ function endTurnAndAdvance(isTimeout = false) {
 $("#show-chat-btn").on("click", function () {
   $("#chat-container").addClass("show");
   $(this).removeClass("has-new-message");
-  hasPlayedNewChatSound = false;
+  hasPlayedNewMessageSound = false;
 });
 
 $("#hide-chat-btn").on("click", function () {
@@ -1165,12 +1215,10 @@ function setupGameUI(gameId) {
     $(".chat-btn-container").show();
     $(".game-id-text").text(gameId);
     $(".persistent-game-info").show();
-    $("#help-btn").hide();
     listenToGameUpdates(gameId);
     setupPresenceSystem();
   } else {
     $("#lobby").hide();
-    $("#help-btn").hide();
     $(".game-id-text").text("Prática");
     $(".copy-id-btn").hide();
     $(".chat-btn-container").hide();
@@ -1263,6 +1311,7 @@ function listenToGameUpdates(gameId) {
 
         if (isMyTurnNow && !wasMyTurnBefore) {
           playAudio(myTurnSound, true);
+          triggerVibration("myTurn");
         }
       }
 
@@ -1453,9 +1502,10 @@ function updateChatNotification(gameData) {
     !$("#chat-container").hasClass("show")
   ) {
     $("#show-chat-btn").addClass("has-new-message");
-    if (!hasPlayedNewChatSound) {
-      playAudio(newChatSound);
-      hasPlayedNewChatSound = true;
+    if (!hasPlayedNewMessageSound) {
+      playAudio(newMessageSound);
+      triggerVibration("newMessage");
+      hasPlayedNewMessageSound = true;
     }
   }
   lastMessageCount = currentMessageCount;
@@ -1467,7 +1517,6 @@ function renderTeamSelectionUI(gameData) {
 
   $modal.css("display", "flex").show();
   $modal.find(".game-id-text").text(gameId);
-  $("#help-btn").hide();
   const currentPlayers = Object.keys(players).length;
   $modal
     .find(".player-count-info")
@@ -1785,7 +1834,8 @@ function executeBotTurnAsHost(currentGameData, botPlayer) {
   let madeSequence = false;
 
   if (newSequence && !move.isRemoval) {
-    playAudio(madeSequenceSound);
+    playAudio(sequenceSuccessSound);
+    triggerVibration("sequenceSuccess");
     madeSequence = true;
     const team = currentGameData.teams[botPlayer.teamId];
     team.sequencesCompleted = (team.sequencesCompleted || 0) + 1;
@@ -1865,13 +1915,19 @@ function hostStartGame() {
 
       const newTurnOrder = [];
       const playersPerTeam = gameData.playerCount / gameData.numTeams;
-
       const populatedTeams = Object.values(gameData.teams)
         .filter((team) => (team.members || []).length > 0)
         .sort((a, b) => a.id.localeCompare(b.id));
 
+      let rotatedTeams = [...populatedTeams];
+      
+      if (gameData.rematchVotes && Object.keys(gameData.rematchVotes).length > 0 && rotatedTeams.length > 0) {
+        const firstTeam = rotatedTeams.shift();
+        rotatedTeams.push(firstTeam);
+      }
+
       for (let i = 0; i < playersPerTeam; i++) {
-        for (const team of populatedTeams) {
+        for (const team of rotatedTeams) {
           if (team.members[i]) {
             newTurnOrder.push(team.members[i]);
           }
@@ -1879,18 +1935,8 @@ function hostStartGame() {
       }
 
       gameData.turnOrder = newTurnOrder;
-
       gameData.currentPlayerIndex = 0;
 
-      if (
-        gameData.rematchVotes &&
-        Object.keys(gameData.rematchVotes).length > 0
-      ) {
-        const firstPlayer = gameData.turnOrder.shift();
-        gameData.turnOrder.push(firstPlayer);
-      }
-
-      gameData.currentPlayerIndex = 0;
       const firstPlayerName = gameData.players[gameData.turnOrder[0]].name;
       gameData.gameMessage = `O jogo começou! Vez de ${firstPlayerName}.`;
 
@@ -2284,12 +2330,14 @@ function promptRematchVote(gameData) {
 
   if (gameData.winner == null) {
     playAudio(drawOrDefeatSound);
+    triggerVibration("draw");
     winTitle = "Empate!";
     winHtml = "A partida terminou em <b>EMPATE</b>!";
     winIcon = "info";
     confirmText = "<i class='fas fa-rotate-right'></i> Jogar novamente";
   } else if (isMyTeamWinning) {
     playAudio(winnerSound);
+    triggerVibration("victory");
     winTitle = "Você Venceu!";
     winIcon = "success";
     const myWinningTeam = gameData.teams[myTeamId];
@@ -2305,6 +2353,7 @@ function promptRematchVote(gameData) {
     confirmText = "<i class='fas fa-rotate-right'></i> Sim, vamos!";
   } else {
     playAudio(drawOrDefeatSound);
+    triggerVibration("defeat");
     winTitle = "Você Perdeu!";
     winIcon = "info";
     const winningTeam = gameData.teams[gameData.winner];
@@ -2613,7 +2662,8 @@ function onBoardSlotClick(event) {
           );
 
           if (newSequence) {
-            playAudio(madeSequenceSound);
+            playAudio(sequenceSuccessSound);
+            triggerVibration("sequenceSuccess");
             myTeam.sequencesCompleted = (myTeam.sequencesCompleted || 0) + 1;
 
             const isCanto = (r, c) =>
@@ -3234,7 +3284,7 @@ function rules(comecandoOpen) {
   });
 }
 
-$(".report-bug-btn").on("click", function () {
+function reportBugOpen() {
   Swal.fire({
     title: "<i class='fas fa-bug'></i> Reportar um Bug?",
     text: "Isso irá coletar informações anônimas sobre o estado atual do jogo para nos ajudar a corrigi-lo. Deseja continuar?",
@@ -3252,9 +3302,11 @@ $(".report-bug-btn").on("click", function () {
   }).then((result) => {
     if (result.isConfirmed) {
       promptBugReport();
+    } else {
+      modalConfigOpen();
     }
   });
-});
+}
 
 function promptBugReport() {
   Swal.fire({
@@ -3309,11 +3361,180 @@ function promptBugReport() {
           "Seu relatório foi enviado com sucesso. Agradecemos sua ajuda!",
           { icon: "success", title: "Obrigado!" }
         );
+      } else {
+        modalConfigOpen();
       }
     })
     .catch((error) => {
       Swal.showValidationMessage(`Falha ao enviar: ${error}`);
     });
+}
+
+function iAocumentationOpen() {
+  const aiInfoHtml = `
+    <div class="swal2-rules-content">
+      <div id="topo" class="swal2-rules-sections">
+        <strong>Seções:</strong>
+        <a href="#sec-hierarquia">Hierarquia de Decisão</a>
+        <a href="#sec-adaptacao">Adaptação ao Jogador</a>
+        <a href="#sec-previsao">Pensamento Preditivo</a>
+        <a href="#sec-outras-ia">Outras Inteligências</a>
+      </div>
+
+      <p style="margin: 15px 0;">A Inteligência Artificial (IA) deste jogo foi projetada para simular um jogador experiente, tomando decisões baseadas em múltiplas camadas de estratégia. Entenda como ela "pensa":</p>
+      
+      <hr>
+
+      <details id="sec-hierarquia" open>
+        <summary><strong><i class="fas fa-brain"></i> Hierarquia de Decisão</strong></summary>
+        <p style="margin-top: 10px;">O bot não escolhe jogadas aleatoriamente. Ele segue uma ordem de prioridades, do mais crítico ao mais estratégico:</p>
+        <ol>
+          <li><strong>Pode Vencer Agora?</strong> Se o bot pode fechar uma sequência, essa é sempre sua primeira prioridade.</li>
+          <li><strong>Precisa Bloquear uma Vitória Iminente?</strong> Se você está prestes a fechar uma sequência, o bot fará de tudo para te impedir.</li>
+          <li><strong>Pode Criar uma Armadilha?</strong> A IA procura ativamente por jogadas que criem duas ameaças de sequência ao mesmo tempo, uma tática poderosa.</li>
+          <li><strong>Precisa Bloquear sua Armadilha?</strong> Antes de tudo, o bot verifica se você está prestes a criar uma armadilha e a neutraliza.</li>
+          <li><strong>Qual é a Melhor Jogada Estratégica?</strong> Se não houver jogadas críticas, o bot avalia todas as opções para encontrar a que oferece o maior ganho a longo prazo.</li>
+        </ol>
+      </details>
+
+      <hr>
+
+      <details id="sec-adaptacao">
+        <summary><strong><i class="fas fa-user-secret"></i> Adaptação ao Jogador</strong></summary>
+        <p style="margin-top: 10px;">O bot aprende com o seu estilo de jogo para te desafiar melhor:</p>
+        <ul>
+          <li><strong>Se você joga de forma agressiva</strong> (bloqueando muito), o bot se torna mais defensivo e cuidadoso.</li>
+          <li><strong>Se você foca em controlar o centro</strong> do tabuleiro, o bot passará a disputar essa área com mais intensidade.</li>
+          <li><strong>Dificuldade Dinâmica:</strong> O bot se ajusta ao seu histórico de vitórias e derrotas, ficando mais "sério" se você ganha muito e "pegando mais leve" se você perde muito.</li>
+        </ul>
+      </details>
+      
+      <hr>
+
+      <details id="sec-previsao">
+        <summary><strong><i class="fas fa-chess-knight"></i> Pensamento Preditivo</strong></summary>
+        <p style="margin-top: 10px;">A principal inteligência do bot está em sua capacidade de prever. Para cada jogada que ele considera fazer, ele se pergunta:</p>
+        <p style="font-style: italic; margin-left: 15px;">"Se eu jogar aqui, qual será a melhor resposta do meu oponente? Essa resposta o ajuda mais do que a minha jogada me ajuda?"</p>
+        <p>Isso o impede de fazer jogadas que, embora pareçam boas, acabariam te dando uma vantagem ainda maior no seu próximo turno.</p>
+      </details>
+
+      <hr>
+      
+      <details id="sec-outras-ia">
+        <summary><strong><i class="fas fa-microchip"></i> Outras Inteligências</strong></summary>
+        <ul style="margin-top: 10px;">
+          <li><strong>Memória de Curto Prazo:</strong> O bot se lembra de um plano que iniciou e se esforça para continuá-lo.</li>
+          <li><strong>Consciência de Jogo:</strong> Ele sabe se o jogo está no início, meio ou fim, e ajusta sua agressividade.</li>
+          <li><strong>Gestão de Recursos:</strong> Usa Valetes de forma inteligente e troca a carta "morta" com menor potencial estratégico.</li>
+          <li><strong>Comportamento Humano:</strong> Em dificuldades menores (e às vezes nas maiores), o bot pode simular um "erro", tornando-o menos previsível.</li>
+        </ul>
+      </details>
+
+      <hr>
+
+      <p style="margin-top: 20px; font-size: 12px; text-align: center;">
+        IA desenvolvida para garantir partidas justas, desafiadoras e divertidas.<br>Ela não trapaceia — apenas pensa bem!
+      </p>
+
+      <span class="swal2-rules-actions">
+        <a href="#topo"><i class="fas fa-up"></i> Voltar ao topo</a>
+      </span>
+    </div>
+  `;
+
+  Swal.fire({
+    title: '<i class="fas fa-robot"></i> Como a IA Pensa',
+    html: aiInfoHtml,
+    showConfirmButton: true,
+    confirmButtonText: "<i class='fas fa-check'></i> Entendi",
+    allowEscapeKey: false,
+    toast: true,
+    position: "center",
+    customClass: {
+      popup: "swal2-rules-popup",
+      actions: "swal2-rules-actions",
+      container: "swal2-rules-container",
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      modalConfigOpen();
+    }
+  });
+}
+
+$(".config-btn").on("click", modalConfigOpen);
+
+function modalConfigOpen() {
+  Swal.fire({
+    title: "<i class='fas fa-cogs'></i> Configurações do Jogo",
+    html: `
+    <div class="modal-config-container">
+      <div class="modal-config-item">
+        <label><i class="fas fa-volume-high"></i> Som</label>
+        <button class="toggle-sound-btn">
+          <span class="config-text"></span>
+        </button>
+      </div>
+
+      <div class="modal-config-item vibration-config-item">
+        <label><i class="fas fa-mobile-screen-button"></i> Vibração</label>
+        <button class="toggle-vibrate-btn">
+          <span class="config-text"></span>
+        </button>
+      </div>
+
+      <div class="modal-config-item">
+        <label><i class="fas fa-robot"></i> Inteligência Artificial</label>
+        <button class="ai-info-btn" title="Informações sobre a IA do Bot">
+          <span class="config-text">Sobre a IA</span>
+        </button>
+      </div>
+
+      <div class="modal-config-item">
+        <label><i class="fas fa-bug"></i> Problemas ou Bugs</label>
+        <button class="report-bug-btn" title="Enviar relato de erro">
+          <span class="config-text">Reportar um problema</span>
+        </button>
+      </div>
+    </div>
+  `,
+    showConfirmButton: true,
+    toast: true,
+    position: "center",
+    confirmButtonText: "<i class='fas fa-times'></i> Fechar",
+    customClass: {
+      popup: "swal2-modal-config-popup",
+      actions: "center",
+    },
+    didOpen: () => {
+      updateSoundButtonUI();
+      updateVibrationButtonUI();
+      $(".toggle-sound-btn").on("click", () => {
+        isMuted = !isMuted;
+        localStorage.setItem(MUTE_STORAGE_KEY, isMuted);
+        updateSoundButtonUI();
+
+        if (!isMuted) {
+          playAudio(myTurnSound);
+        }
+      });
+
+      if (isVibrationAvailable()) {
+        $(".toggle-vibrate-btn").on("click", () => {
+          isVibratingOff = !isVibratingOff;
+          localStorage.setItem(VIBRATION_STORAGE_KEY, isVibratingOff);
+          updateVibrationButtonUI();
+          triggerVibration("cliqueConfig");
+        });
+      } else {
+        $(".vibration-config-item").hide();
+      }
+
+      $(".report-bug-btn").on("click", reportBugOpen);
+
+      $(".ai-info-btn").on("click", iAocumentationOpen);
+    },
+  });
 }
 
 $(function () {

@@ -1,5 +1,8 @@
 const coresDisponiveis = { red: "Vermelha", blue: "Azul", green: "Verde" };
+const DEBUG_AI = true;
 const LOCAL_GAME_KEY = "sequenceLocalGameData";
+const PLAYER_PROFILE_KEY = "sequencePlayerProfile";
+const WIN_LOSS_HISTORY_KEY = "sequenceWinLossHistory";
 const BOT_NAMES = [
   "Alice",
   "Andreza",
@@ -46,6 +49,19 @@ const BOT_NAMES = [
   "Warley",
   "Wendell",
   "Wesley",
+];
+
+const POSITIONAL_WEIGHT_MAP = [
+  [1, 2, 2, 3, 3, 3, 3, 2, 2, 1],
+  [2, 3, 3, 4, 4, 4, 4, 3, 3, 2],
+  [2, 3, 4, 5, 5, 5, 5, 4, 3, 2],
+  [3, 4, 5, 6, 6, 6, 6, 5, 4, 3],
+  [3, 4, 5, 6, 7, 7, 6, 5, 4, 3],
+  [3, 4, 5, 6, 7, 7, 6, 5, 4, 3],
+  [3, 4, 5, 6, 6, 6, 6, 5, 4, 3],
+  [2, 3, 4, 5, 5, 5, 5, 4, 3, 2],
+  [2, 3, 3, 4, 4, 4, 4, 3, 3, 2],
+  [1, 2, 2, 3, 3, 3, 3, 2, 2, 1],
 ];
 
 let localGameData = {};
@@ -96,6 +112,7 @@ function loadAndResumeLocalGame() {
   }
   return false;
 }
+
 function leaveGameLocal(save) {
   if (!save) localStorage.removeItem("sequenceLocalGameData");
   window.location.href = window.location.pathname;
@@ -218,15 +235,36 @@ onBoardSlotClickLocal = function (event) {
     return;
   }
 
+  const boardStateBeforeMove = JSON.parse(
+    JSON.stringify(localGameData.boardState)
+  );
+
   player.hand.splice(cardIndexToRemove, 1);
 
   if (!localGameData.discardPile) localGameData.discardPile = [];
   localGameData.discardPile.push(selectedHandCard.card);
+
   if ($slot.hasClass("highlighted-removal")) {
     delete localGameData.boardState[`${row}_${col}`];
+    updatePlayerProfile({ isRemoval: true }, boardStateBeforeMove);
   } else {
     localGameData.boardState[`${row}_${col}`] = player.teamId;
-    handlePostMoveChecks(row, col, player.teamId, false);
+    const completedSequence = handlePostMoveChecks(
+      row,
+      col,
+      player.teamId,
+      false
+    );
+    updatePlayerProfile(
+      {
+        row,
+        col,
+        teamId: player.teamId,
+        isRemoval: false,
+        completedSequence: completedSequence,
+      },
+      boardStateBeforeMove
+    );
   }
 
   selectedHandCard = null;
@@ -295,7 +333,7 @@ function completeDrawingPhase(isPlayerAction) {
 
 function handlePostMoveChecks(row, col, teamId, isBotMove = false) {
   const team = localGameData.teams[teamId];
-  if (!team) return false;
+  if (!team) return null;
   const newSequence = checkForSequence(
     localGameData.boardState,
     localGameData.lockedChips,
@@ -304,7 +342,8 @@ function handlePostMoveChecks(row, col, teamId, isBotMove = false) {
     teamId
   );
   if (newSequence) {
-    playAudio(madeSequenceSound);
+    playAudio(sequenceSuccessSound);
+    triggerVibration("sequenceSuccess");
     team.sequencesCompleted++;
     const isCanto = (r, c) => (r === 0 || r === 9) && (c === 0 || c === 9);
     newSequence.forEach((chip) => {
@@ -329,11 +368,9 @@ function handlePostMoveChecks(row, col, teamId, isBotMove = false) {
     if (team.sequencesCompleted >= sequencesNeeded) {
       endLocalGame(teamId);
     }
-
-    return true;
+    return newSequence;
   }
-
-  return false;
+  return null;
 }
 
 function endLocalGame(winnerId) {
@@ -343,6 +380,8 @@ function endLocalGame(winnerId) {
   const winningTeam = localGameData.teams[winnerId];
   const myTeamId = localGameData.players[myPlayerId].teamId;
   const isMyTeamWinning = winnerId === myTeamId;
+
+  updateWinLossHistory(isMyTeamWinning ? "win" : "loss");
 
   let winnerMessage;
   let dialogTitle;
@@ -376,8 +415,10 @@ function endLocalGame(winnerId) {
   setTimeout(() => {
     if (isMyTeamWinning) {
       playAudio(winnerSound);
+      triggerVibration("victory");
     } else {
       playAudio(drawOrDefeatSound);
+      triggerVibration("defeat");
     }
     promptLocalRematch(winnerMessage, dialogTitle);
   }, 3000);
@@ -388,11 +429,14 @@ function endLocalGameAsDraw() {
   localGameData.winner = null;
   localGameData.gameMessage = "FIM DE JOGO! Empate!";
 
+  updateWinLossHistory("draw");
+
   renderAll(localGameData);
   $("#deck-pile").addClass("disabled");
 
   setTimeout(() => {
     playAudio(drawOrDefeatSound);
+    triggerVibration("draw");
     promptLocalRematch("O jogo terminou em <b>EMPATE</b>!", "Empate!");
   }, 3000);
 }
@@ -438,6 +482,11 @@ function restartLocalGame() {
   const oldData = { ...localGameData };
   const deck = createAndShuffleDeck();
   const cardsToDeal = CARDS_PER_PLAYER[oldData.playerCount];
+  const rotatedTurnOrder = [...oldData.turnOrder];
+  if (rotatedTurnOrder.length > 0) {
+    const firstPlayer = rotatedTurnOrder.shift();
+    rotatedTurnOrder.push(firstPlayer);
+  }
 
   localGameData = {
     ...oldData,
@@ -446,10 +495,11 @@ function restartLocalGame() {
     lockedChips: {},
     deck: deck,
     discardPile: [],
-    turnOrder: oldData.turnOrder,
+    turnOrder: rotatedTurnOrder,
     currentPlayerIndex: 0,
     turnState: "playing",
     winner: null,
+    botIntentions: {},
   };
 
   Object.values(localGameData.players).forEach((p) => {
@@ -533,8 +583,10 @@ function checkNextTurn() {
       localGameData.turnOrder[localGameData.currentPlayerIndex]
     ];
 
-  const nextPlayerIndex = (localGameData.currentPlayerIndex + 1) % localGameData.playerCount;
-  const nextPlayer = localGameData.players[localGameData.turnOrder[nextPlayerIndex]];
+  const nextPlayerIndex =
+    (localGameData.currentPlayerIndex + 1) % localGameData.playerCount;
+  const nextPlayer =
+    localGameData.players[localGameData.turnOrder[nextPlayerIndex]];
 
   if (currentPlayer.isBot) {
     let botMessage = `Aguardando ${currentPlayer.name}...`;
@@ -544,7 +596,7 @@ function checkNextTurn() {
       botMessage += ` Próximo a jogar: <b>${nextPlayer.name}</b>`;
     }
     $("#game-message").html(botMessage);
-    
+
     const delay = Math.floor(Math.random() * (3000 - 1500 + 1)) + 1500;
     setTimeout(executeBotTurn, delay);
   } else {
@@ -558,6 +610,7 @@ function checkNextTurn() {
       setTimeout(endTurn, 1500);
     } else {
       playAudio(myTurnSound, true);
+      triggerVibration("myTurn");
       localGameData.gameMessage = "Sua vez! Selecione uma carta para jogar.";
       updateGameInfo(localGameData);
       $("#board .card-slot").css("pointer-events", "auto");
@@ -615,6 +668,103 @@ function generateSequenceMap() {
   SEQUENCE_MAP = map;
 }
 
+function updateWinLossHistory(result) {
+  const history = JSON.parse(localStorage.getItem(WIN_LOSS_HISTORY_KEY)) || {
+    wins: 0,
+    losses: 0,
+    draws: 0,
+    streak: 0,
+  };
+
+  if (result === "win") {
+    history.wins++;
+    history.streak = history.streak >= 0 ? history.streak + 1 : 1;
+  } else if (result === "loss") {
+    history.losses++;
+    history.streak = history.streak <= 0 ? history.streak - 1 : -1;
+  } else {
+    history.draws++;
+  }
+
+  localStorage.setItem(WIN_LOSS_HISTORY_KEY, JSON.stringify(history));
+}
+
+function getPlayerProfile() {
+  const profile = localStorage.getItem(PLAYER_PROFILE_KEY);
+  return profile
+    ? JSON.parse(profile)
+    : {
+        totalMoves: 0,
+        buildMoves: 0,
+        blockMoves: 0,
+        centerControlMoves: 0,
+        jackRemovals: 0,
+        lastSequences: [],
+      };
+}
+
+function updatePlayerProfile(move, boardStateBeforeMove) {
+  const profile = getPlayerProfile();
+  profile.totalMoves++;
+
+  if (move.isRemoval) {
+    profile.jackRemovals++;
+  } else {
+    const { row, col, teamId } = move;
+    const opponentTeamIds = Object.keys(localGameData.teams).filter(
+      (id) => id !== teamId
+    );
+
+    let wasBlock = false;
+    const directions = [
+      { r: 0, c: 1 },
+      { r: 1, c: 0 },
+      { r: 1, c: 1 },
+      { r: 1, c: -1 },
+    ];
+    for (const dir of directions) {
+      let opponentChips = 0;
+      for (let i = 1; i < 4; i++) {
+        const r = row + dir.r * i;
+        const c = col + dir.c * i;
+        if (opponentTeamIds.includes(boardStateBeforeMove[`${r}_${c}`]))
+          opponentChips++;
+        else break;
+      }
+      for (let i = 1; i < 4; i++) {
+        const r = row - dir.r * i;
+        const c = col - dir.c * i;
+        if (opponentTeamIds.includes(boardStateBeforeMove[`${r}_${c}`]))
+          opponentChips++;
+        else break;
+      }
+      if (opponentChips >= 3) {
+        wasBlock = true;
+        break;
+      }
+    }
+
+    if (wasBlock) {
+      profile.blockMoves++;
+    } else {
+      profile.buildMoves++;
+    }
+
+    if (row >= 3 && row <= 6 && col >= 3 && col <= 6) {
+      profile.centerControlMoves++;
+    }
+  }
+
+  if (move.completedSequence) {
+    profile.lastSequences.push(
+      move.completedSequence.map((s) => `${s.row}_${s.col}`)
+    );
+    if (profile.lastSequences.length > 3) profile.lastSequences.shift();
+  }
+
+  localStorage.setItem(PLAYER_PROFILE_KEY, JSON.stringify(profile));
+}
+
 function executeBotTurn() {
   const botId = localGameData.turnOrder[localGameData.currentPlayerIndex];
   const bot = localGameData.players[botId];
@@ -624,11 +774,17 @@ function executeBotTurn() {
     isCardDead(card, localGameData.boardState)
   );
   if (deadCards.length > 0 && localGameData.deck.length > 0) {
-    const cardToDiscard = deadCards[0];
-    const cardIndex = bot.hand.indexOf(cardToDiscard);
-    if (cardIndex > -1) {
-      bot.hand.splice(cardIndex, 1);
+    let cardToDiscard = deadCards[0];
+    if (deadCards.length > 1) {
+      cardToDiscard = deadCards.sort((a, b) => {
+        const potentialA = evaluateCardPotential(a, {});
+        const potentialB = evaluateCardPotential(b, {});
+        return potentialA - potentialB;
+      })[0];
     }
+
+    const cardIndex = bot.hand.indexOf(cardToDiscard);
+    if (cardIndex > -1) bot.hand.splice(cardIndex, 1);
     if (!localGameData.discardPile) localGameData.discardPile = [];
     localGameData.discardPile.push(cardToDiscard);
     bot.hand.push(localGameData.deck.pop());
@@ -636,23 +792,30 @@ function executeBotTurn() {
   }
 
   const difficulty = localGameData.botDifficulty || "hard";
-  let useStrategicMove = false;
+  const history = JSON.parse(localStorage.getItem(WIN_LOSS_HISTORY_KEY)) || {
+    streak: 0,
+  };
+  const winStreak = history.streak || 0;
 
-  switch (difficulty) {
-    case "expert":
-      useStrategicMove = true;
-      break;
-    case "hard":
-      useStrategicMove = Math.random() < 0.9;
-      break;
-    case "medium":
-      useStrategicMove = Math.random() < 0.75;
-      break;
-    case "easy":
-      useStrategicMove = Math.random() < 0.5;
-      break;
-    default:
-      useStrategicMove = true;
+  let strategicChance = { easy: 0.5, medium: 0.75, hard: 0.9, expert: 1.0 }[
+    difficulty
+  ];
+  if (winStreak > 0) {
+    strategicChance += winStreak * 0.05;
+  }
+  if (winStreak < 0) {
+    strategicChance += winStreak * 0.08;
+  }
+  strategicChance = Math.max(0.1, Math.min(1.0, strategicChance));
+
+  let useStrategicMove = Math.random() < strategicChance;
+
+  const errorChance = { easy: 0.2, medium: 0.1, hard: 0.05, expert: 0.01 }[
+    difficulty
+  ];
+  if (useStrategicMove && Math.random() < errorChance) {
+    if (DEBUG_AI) console.log(`[BOT - ${bot.name}] SIMULANDO ERRO HUMANO!`);
+    useStrategicMove = false;
   }
 
   if (useStrategicMove) {
@@ -665,34 +828,65 @@ function executeBotTurn() {
     move = getRandomMove(localGameData, bot);
   }
 
-  if (move) {
-    const cardIndex = bot.hand.indexOf(move.card);
-    if (cardIndex > -1) {
-      bot.hand.splice(cardIndex, 1);
-    } else {
-      if (!localGameData.winner) endTurn();
-      return;
-    }
-    if (!localGameData.discardPile) localGameData.discardPile = [];
-    localGameData.discardPile.push(move.card);
-
-    if (move.isRemoval) {
-      delete localGameData.boardState[move.slotKey];
-    } else {
-      localGameData.boardState[move.slotKey] = bot.teamId;
-
-      handlePostMoveChecks(move.row, move.col, bot.teamId, true);
-    }
-    if (localGameData.deck.length > 0) {
-      bot.hand.push(localGameData.deck.pop());
-    }
-  } else {
-    showToast(`<b>${bot.name}</b> não tinha jogadas e passou a vez.`, {
-      icon: "info",
-    });
+  if (DEBUG_AI && move) {
+    console.log(
+      `[BOT - ${bot.name}] Decisão: ${move.reason} (Score: ${move.score.toFixed(
+        2
+      )}) | Estratégia: ${useStrategicMove ? "ON" : "OFF"}`
+    );
   }
 
-  if (!localGameData.winner) endTurn();
+  const baseDelay = 1000;
+  const complexityDelay = move ? Math.min(move.score / 50, 1500) : 0;
+  const randomDelay = Math.random() * 500;
+  const totalDelay = baseDelay + complexityDelay + randomDelay;
+
+  setTimeout(() => {
+    if (move) {
+      const cardIndex = bot.hand.indexOf(move.card);
+      if (cardIndex > -1) {
+        bot.hand.splice(cardIndex, 1);
+      } else {
+        if (!localGameData.winner) endTurn();
+        return;
+      }
+      if (!localGameData.discardPile) localGameData.discardPile = [];
+      localGameData.discardPile.push(move.card);
+      if (move.isRemoval) {
+        delete localGameData.boardState[move.slotKey];
+      } else {
+        localGameData.boardState[move.slotKey] = bot.teamId;
+        handlePostMoveChecks(move.row, move.col, bot.teamId, true);
+      }
+      if (localGameData.deck.length > 0) {
+        bot.hand.push(localGameData.deck.pop());
+      }
+
+      if (move && !move.isRemoval) {
+        const bestSequenceFormed = findAllValidNewSequences(
+          localGameData.boardState,
+          localGameData.lockedChips,
+          move.row,
+          move.col,
+          bot.teamId
+        ).sort((a, b) => b.length - a.length)[0];
+
+        if (bestSequenceFormed) {
+          localGameData.botIntentions = localGameData.botIntentions || {};
+          localGameData.botIntentions[bot.id] = {
+            line: bestSequenceFormed.map((p) => `${p.row}_${p.col}`),
+            lastUpdateTurn: localGameData.currentPlayerIndex,
+          };
+        }
+      }
+    } else {
+      showToast(`<b>${bot.name}</b> não tinha jogadas e passou a vez.`, {
+        icon: "info",
+      });
+    }
+
+    if (!localGameData.winner) endTurn();
+  }, totalDelay);
 }
 
 function analyzeSequence(
@@ -799,6 +993,26 @@ function isLineBlocked(r, c, dir, teamId, boardState, opponentTeamIds) {
   return lineLength >= 4 && openEnds < 1;
 }
 
+function evaluateCardPotential(card, boardState) {
+  if (card.includes("J")) return 100;
+
+  let potentialScore = 0;
+  let openSlots = 0;
+
+  for (let r = 0; r < 10; r++) {
+    for (let c = 0; c < 10; c++) {
+      if (BOARD_LAYOUT[r][c] === card) {
+        if (!boardState[`${r}_${c}`]) {
+          openSlots++;
+          potentialScore += POSITIONAL_WEIGHT_MAP[r][c];
+        }
+      }
+    }
+  }
+
+  return openSlots > 0 ? potentialScore : -1;
+}
+
 function evaluatePosition(row, col, teamId, boardState) {
   let maxSequence = 0;
   const directions = [
@@ -833,6 +1047,8 @@ function evaluatePosition(row, col, teamId, boardState) {
 
 function evaluatePositionWithHandPotential(row, col, teamId, boardState, hand) {
   let maxScore = 0;
+  let multifunctionalityBonus = 0;
+
   const directions = [
     { r: 0, c: 1 },
     { r: 1, c: 0 },
@@ -850,26 +1066,21 @@ function evaluatePositionWithHandPotential(row, col, teamId, boardState, hand) {
 
     for (let j = 1; j >= -1; j -= 2) {
       if (j === -1 && (dir.r === 0 || (dir.r === 1 && dir.c === 0))) continue;
-
       for (let i = 1; i < 5; i++) {
         const r = row + dir.r * i * j;
         const c = col + dir.c * i * j;
-
         if (r < 0 || r > 9 || c < 0 || c > 9) {
           openEnds--;
           break;
         }
-
         const k = `${r}_${c}`;
         const owner = tempBoard[k];
         const cardNeeded = BOARD_LAYOUT[r][c];
-
         if (cardNeeded === "F") {
           isCornerAdjacent = true;
           currentSequence++;
           continue;
         }
-
         if (owner === teamId) {
           currentSequence++;
         } else if (!owner) {
@@ -889,11 +1100,13 @@ function evaluatePositionWithHandPotential(row, col, teamId, boardState, hand) {
     else if (currentSequence === 3) score = 10;
     else score = 1;
 
+    if (currentSequence >= 3) {
+      multifunctionalityBonus += score * 0.5;
+    }
+
     if (openEnds === 2 && currentSequence > 1) score *= 1.5;
     if (isCornerAdjacent && currentSequence >= 3) score *= 1.8;
-
     score += potentialHandBonus;
-
     if (score > maxScore) maxScore = score;
   }
 
@@ -906,7 +1119,10 @@ function evaluatePositionWithHandPotential(row, col, teamId, boardState, hand) {
       teamworkBonus += 5;
     }
   }
-  return maxScore + teamworkBonus;
+
+  const positionalBonus = POSITIONAL_WEIGHT_MAP[row][col];
+
+  return maxScore + teamworkBonus + positionalBonus + multifunctionalityBonus;
 }
 
 function isSequenceOpenEnded(sequence, boardState) {
@@ -941,7 +1157,50 @@ function isSequenceOpenEnded(sequence, boardState) {
   return isPrevEmpty && isNextEmpty;
 }
 
+function getBestOpponentResponse(simulatedGameData, opponentPlayer) {
+  let opponentMoves = [];
+  const opponentHand = opponentPlayer.hand || [];
+  const opponentTeamId = opponentPlayer.teamId;
+
+  for (const card of opponentHand.filter((c) => !c.includes("J"))) {
+    for (let r = 0; r < 10; r++) {
+      for (let c = 0; c < 10; c++) {
+        if (
+          BOARD_LAYOUT[r][c] === card &&
+          !simulatedGameData.boardState[`${r}_${c}`]
+        ) {
+          const score = evaluatePositionWithHandPotential(
+            r,
+            c,
+            opponentTeamId,
+            simulatedGameData.boardState,
+            opponentHand
+          );
+          opponentMoves.push({ card, r, c, score });
+        }
+      }
+    }
+  }
+
+  if (opponentMoves.length === 0) return null;
+
+  opponentMoves.sort((a, b) => b.score - a.score);
+  return opponentMoves[0];
+}
+
+function getCardsInPlay(gameData) {
+  const cards = new Set();
+  Object.values(gameData.players).forEach((p) => {
+    (p.hand || []).forEach((card) => cards.add(card));
+  });
+  (gameData.discardPile || []).forEach((card) => cards.add(card));
+  return cards;
+}
+
 function getStrategicMove(gameData, botPlayer) {
+  const playerProfile = getPlayerProfile();
+  const botIntentions = gameData.botIntentions || {};
+
   if (SEQUENCE_MAP.length === 0) {
     generateSequenceMap();
   }
@@ -957,6 +1216,83 @@ function getStrategicMove(gameData, botPlayer) {
   const twoEyedJack = hand.find((c) => c === "JD" || c === "JC");
   let possibleMoves = [];
 
+  const deckSize = gameData.deck ? gameData.deck.length : 0;
+  let gamePhase = "midgame";
+  if (deckSize > 70) {
+    gamePhase = "opening";
+  } else if (deckSize < 20) {
+    gamePhase = "endgame";
+  }
+
+  let playerIsAggressive =
+    playerProfile.totalMoves > 10 &&
+    playerProfile.blockMoves / playerProfile.totalMoves > 0.4;
+  let playerFavorsCenter =
+    playerProfile.totalMoves > 10 &&
+    playerProfile.centerControlMoves / playerProfile.totalMoves > 0.35;
+
+  if (gameData.players["player1"] && gameData.players["player1"].moveHistory) {
+    const lastHumanMove = Object.values(
+      gameData.players["player1"].moveHistory
+    ).slice(-3);
+    const recentBlockMoves = lastHumanMove.filter(
+      (move) => move.type === "block"
+    ).length;
+    if (lastHumanMove.length === 3 && recentBlockMoves >= 2) {
+      playerIsAggressive = true;
+    }
+  }
+
+  const opponent = gameData.players["player1"];
+  if (opponent) {
+    const opponentHand = opponent.hand || [];
+    let threatMap = {};
+    for (const card of opponentHand.filter((c) => !c.includes("J"))) {
+      for (let r = 0; r < 10; r++) {
+        for (let c = 0; c < 10; c++) {
+          if (BOARD_LAYOUT[r][c] === card && !boardState[`${r}_${c}`]) {
+            const tempBoard = { ...boardState, [`${r}_${c}`]: opponent.teamId };
+            const newSequences = findAllValidNewSequences(
+              tempBoard,
+              lockedChips,
+              r,
+              c,
+              opponent.teamId
+            );
+            if (newSequences.length >= 2) {
+              threatMap[`${r}_${c}`] = (threatMap[`${r}_${c}`] || 0) + 1;
+            }
+          }
+        }
+      }
+    }
+    const doubleThreatSlot = Object.keys(threatMap).find(
+      (key) => threatMap[key] > 0
+    );
+    if (doubleThreatSlot) {
+      const cardNeededToBlock =
+        BOARD_LAYOUT[parseInt(doubleThreatSlot.split("_")[0])][
+          parseInt(doubleThreatSlot.split("_")[1])
+        ];
+      if (hand.includes(cardNeededToBlock)) {
+        return {
+          card: cardNeededToBlock,
+          ...parseSlotKey(doubleThreatSlot),
+          score: 48000,
+          reason: "Block Opponent's Winning Trap",
+        };
+      }
+      if (twoEyedJack) {
+        possibleMoves.push({
+          card: twoEyedJack,
+          ...parseSlotKey(doubleThreatSlot),
+          score: 47900,
+          reason: "Block Opponent's Winning Trap with Jack",
+        });
+      }
+    }
+  }
+
   for (const sequence of SEQUENCE_MAP) {
     const analysis = analyzeSequence(
       sequence,
@@ -965,7 +1301,6 @@ function getStrategicMove(gameData, botPlayer) {
       opponentTeamIds,
       lockedChips
     );
-
     if (
       analysis.myChips === 4 &&
       analysis.myLockedChips < 2 &&
@@ -989,34 +1324,159 @@ function getStrategicMove(gameData, botPlayer) {
         });
       }
     }
-
     for (const opponentId in analysis.opponentChipCounts) {
       if (
         analysis.opponentChipCounts[opponentId] === 4 &&
         analysis.emptySlots.length === 1
       ) {
         const blockingSlot = analysis.emptySlots[0];
-
-        if (hand.includes(blockingSlot.card)) {
+        const cardNeededToBlock = blockingSlot.card;
+        if (hand.includes(cardNeededToBlock)) {
           possibleMoves.push({
-            card: blockingSlot.card,
+            card: cardNeededToBlock,
             ...parseSlotKey(blockingSlot.slotKey),
             score: 40000,
             reason: "Block Opponent",
           });
         }
         if (twoEyedJack) {
+          const cardsInPlay = getCardsInPlay(gameData);
+          let neededCardsOut = 0;
+          if (cardsInPlay.has(cardNeededToBlock)) {
+            neededCardsOut = Array.from(cardsInPlay.values()).filter(
+              (c) => c === cardNeededToBlock
+            ).length;
+          }
+          const probability =
+            deckSize > 0 ? (2 - neededCardsOut) / deckSize : 0;
+          const jackScore = 39900 * (1 - probability);
           possibleMoves.push({
             card: twoEyedJack,
             ...parseSlotKey(blockingSlot.slotKey),
-            score: 39900,
-            reason: "Block Opponent with Jack",
+            score: jackScore,
+            reason: "Block Opponent with Jack (prob-adjusted)",
           });
         }
       }
     }
+  }
 
-    if (oneEyedJack) {
+  const nonJackHand = hand.filter((c) => !c.includes("J"));
+  for (const card of nonJackHand) {
+    for (let r = 0; r < 10; r++) {
+      for (let c = 0; c < 10; c++) {
+        if (BOARD_LAYOUT[r][c] === card && !boardState[`${r}_${c}`]) {
+          const tempBoard = { ...boardState, [`${r}_${c}`]: botTeamId };
+          const newSequences = findAllValidNewSequences(
+            tempBoard,
+            lockedChips,
+            r,
+            c,
+            botTeamId
+          );
+          if (newSequences.length >= 2) {
+            possibleMoves.push({
+              card,
+              row: r,
+              col: c,
+              slotKey: `${r}_${c}`,
+              score: 45000,
+              reason: "Create a winning trap",
+            });
+          }
+        }
+      }
+    }
+  }
+
+  for (const card of nonJackHand) {
+    for (let r = 0; r < 10; r++) {
+      for (let c = 0; c < 10; c++) {
+        const slotKey = `${r}_${c}`;
+        if (BOARD_LAYOUT[r][c] === card && !boardState[slotKey]) {
+          let myMoveScore = evaluatePositionWithHandPotential(
+            r,
+            c,
+            botTeamId,
+            boardState,
+            hand
+          );
+
+          const overlappingSequences = SEQUENCE_MAP.filter(
+            (seq) =>
+              seq.includes(slotKey) &&
+              seq.some((s) => boardState[s] === botTeamId)
+          );
+          if (overlappingSequences.length >= 2) {
+            myMoveScore += overlappingSequences.length * 20;
+          }
+
+          if (gamePhase === "opening") {
+            myMoveScore += POSITIONAL_WEIGHT_MAP[r][c] * 2;
+          } else if (gamePhase === "endgame" && myMoveScore > 50) {
+            myMoveScore *= 1.5;
+          }
+
+          const cardPotential = evaluateCardPotential(card, boardState);
+          if (myMoveScore < 50 && cardPotential > 10) {
+            myMoveScore -= cardPotential * 0.5;
+          }
+
+          if (playerIsAggressive) {
+            const opponentTeamId = opponentTeamIds[0];
+            if (
+              opponentTeamId &&
+              evaluatePosition(r, c, opponentTeamId, boardState) >= 4
+            )
+              myMoveScore *= 1.15;
+          }
+          if (playerFavorsCenter && r >= 3 && r <= 6 && c >= 3 && c <= 6) {
+            myMoveScore *= 1.1;
+          }
+
+          const simulatedGameData = JSON.parse(JSON.stringify(gameData));
+          simulatedGameData.boardState[slotKey] = botTeamId;
+          const humanPlayer = simulatedGameData.players["player1"];
+          const opponentBestMove = getBestOpponentResponse(
+            simulatedGameData,
+            humanPlayer
+          );
+          let opponentResponseScore = opponentBestMove
+            ? opponentBestMove.score
+            : 0;
+          if (opponentResponseScore > 10000) opponentResponseScore = 1500;
+
+          let memoryBonus = 0;
+          if (botIntentions[botPlayer.id]) {
+            const intendedLine = botIntentions[botPlayer.id].line;
+            if (intendedLine && intendedLine.includes(slotKey)) {
+              memoryBonus = 50;
+            }
+          }
+
+          const finalScore = myMoveScore - opponentResponseScore + memoryBonus;
+          possibleMoves.push({
+            card,
+            row: r,
+            col: c,
+            slotKey,
+            score: finalScore,
+            reason: "Predictive Placement",
+          });
+        }
+      }
+    }
+  }
+
+  if (oneEyedJack) {
+    for (const sequence of SEQUENCE_MAP) {
+      const analysis = analyzeSequence(
+        sequence,
+        boardState,
+        botTeamId,
+        opponentTeamIds,
+        lockedChips
+      );
       const totalOpponentChips = Object.values(
         analysis.opponentChipCounts
       ).reduce((a, b) => a + b, 0);
@@ -1036,65 +1496,26 @@ function getStrategicMove(gameData, botPlayer) {
           });
         }
       }
-
       for (const opponentId in analysis.opponentChipCounts) {
-        const chipCount = analysis.opponentChipCounts[opponentId];
-        const isRealThreat =
-          chipCount === 4 || (chipCount === 3 && analysis.hasCorner);
-
-        if (isRealThreat && analysis.emptySlots.length <= 1) {
-          const opponentSlotsForThisTeam =
-            analysis.opponentSlots[opponentId] || [];
-          for (const opponentSlotKey of opponentSlotsForThisTeam) {
-            if (!lockedChips[opponentSlotKey]) {
-              let score = 34800;
-              let reason = "Remove chip from opponent's critical threat";
-
-              if (
-                analysis.myChips > 0 ||
-                Object.keys(analysis.opponentChipCounts).length > 1
-              ) {
-                score = 0;
-                reason = "Avoids removing chip from already-blocked sequence";
-              }
-
-              if (score > 0) {
+        if (analysis.opponentChipCounts[opponentId] === 4) {
+          const isInternallyBlocked =
+            analysis.myChips > 0 ||
+            Object.keys(analysis.opponentChipCounts).length > 1;
+          if (!isInternallyBlocked) {
+            const opponentSlotsForThisTeam =
+              analysis.opponentSlots[opponentId] || [];
+            for (const opponentSlotKey of opponentSlotsForThisTeam) {
+              if (!lockedChips[opponentSlotKey]) {
                 possibleMoves.push({
                   card: oneEyedJack,
                   isRemoval: true,
                   ...parseSlotKey(opponentSlotKey),
-                  score: score,
-                  reason: reason,
+                  score: 38000,
+                  reason: `Remove chip from a 4-chip threat`,
                 });
               }
             }
           }
-        }
-      }
-    }
-  }
-
-  const regularHand = hand.filter((c) => !c.includes("J"));
-  for (const card of regularHand) {
-    for (let r = 0; r < 10; r++) {
-      for (let c = 0; c < 10; c++) {
-        const slotKey = `${r}_${c}`;
-        if (BOARD_LAYOUT[r][c] === card && !boardState[slotKey]) {
-          const score = evaluatePositionWithHandPotential(
-            r,
-            c,
-            botTeamId,
-            boardState,
-            hand
-          );
-          possibleMoves.push({
-            card,
-            row: r,
-            col: c,
-            slotKey,
-            score,
-            reason: "Strategic placement",
-          });
         }
       }
     }
@@ -1130,6 +1551,8 @@ function getRandomMove(gameData, botPlayer) {
       return {
         card,
         ...possibleSlots[Math.floor(Math.random() * possibleSlots.length)],
+        score: 0,
+        reason: "Random Move",
       };
     }
   }
@@ -1317,6 +1740,7 @@ function startLocalGame(playerCount, numTeams, chosenColors) {
     currentPlayerIndex: 0,
     turnState: "playing",
     winner: null,
+    botIntentions: {},
     gameMessage: `O jogo começou! Vez de ${players[turnOrder[0]].name}.`,
   };
 
@@ -1326,6 +1750,7 @@ function startLocalGame(playerCount, numTeams, chosenColors) {
   window.history.pushState({}, "Sequence Local", "?game=local");
 
   setupGameUI("local");
+  $(".ai-info-btn").show();
   renderAll(localGameData);
   checkNextTurn();
 }
