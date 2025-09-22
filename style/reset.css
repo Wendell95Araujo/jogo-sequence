@@ -46,3 +46,25 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+
+/* ===== Reset de Estilo para Compatibilidade com iOS/Safari ===== */
+input,
+select,
+button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Garante que o padding seja aplicado corretamente no iOS */
+input[type="text"],
+select {
+  padding: 5px 10px;
+}
+
+/* Remove a sombra interna que o iOS adiciona em inputs */
+input[type="text"] {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}

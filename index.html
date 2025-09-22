@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -17,7 +17,6 @@
     <meta name="application-name" content="PWA Workshop" />
     <meta name="apple-mobile-web-app-title" content="PWA Workshop" />
     <meta name="msapplication-starturl" content="/index.html" />
-    <!-- Open Graph Meta Tags -->
     <meta
       property="og:title"
       content="Sequence Online – Jogo de Tabuleiro Multiplayer (2 a 12 Jogadores)"
@@ -36,7 +35,6 @@
       content="https://game-sequence-multiplayer.web.app/assets/img/thumb.png"
     />
     <meta property="og:site_name" content="Sequence Online" />
-    <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
@@ -79,18 +77,31 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script
-      type="application/javascript"
-      src="script/firebaseConfig.js"
-    ></script>
+    <script type="application/javascript" src="script/firebaseConfig.js"></script>
+    <script type="application/javascript" src="script/translate.js"></script>
     <script
       async
       src="https://cdn.jsdelivr.net/npm/pwacompat@2.0.8/pwacompat.min.js"
       integrity="sha384-uONtBTCBzHKF84F6XvyC8S0gL8HTkAPeCyBNvfLfsqHh+Kd6s/kaS4BdmNQ5ktp1"
       crossorigin="anonymous"
     ></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4902049202817235"
+     crossorigin="anonymous"></script>
+     <script async src="https://www.googletagmanager.com/gtag/js?id=G-62SDQ9FKXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-62SDQ9FKXX');
+    </script>
   </head>
   <body>
+    <noscript>
+      <h1>Bem-vindo ao Sequence Online!</h1>
+      <p>Para jogar, você precisa habilitar o JavaScript no seu navegador.</p>
+      <p>Jogue o clássico jogo de tabuleiro Sequence com amigos e família online. Crie salas, junte-se a partidas e desafie jogadores de todo o mundo.</p>
+    </noscript>
     <div class="loading">
       <div class="spinner">
         <div class="icon red"><i class="fas fa-heart"></i></div>
@@ -116,29 +127,28 @@
       </div>
     </div>
 
-    <div id="help-btn">
-      <i class="far fa-circle-info"></i>
-      <span>regras</span>
-    </div>
-
     <div id="lobby">
-      <h1 id="title">Sequence Online</h1>
-      <h2 id="lobby-title">Lobby do jogo</h2>
+      <div id="help-btn">
+        <i class="far fa-circle-info"></i>
+        <span data-translate-key="rules">regras</span>
+      </div>
+      <h1 id="title"><img class="logo-title left" src="ios/60.png" alt="Logo Sequence" width="50" height="50"> Sequence Online <img class="logo-title right" src="ios/60.png" alt="Logo Sequence" width="50" height="50"></h1>
+      <h2 id="lobby-title" data-translate-key="lobbyTitle">Lobby do jogo</h2>
 
       <div id="name-options" class="options">
-        <label for="player-name-input" class="small">Nome e Avatar:</label>
+        <label for="player-name-input" class="small" data-translate-key="nameAndAvatar">Nome e Avatar:</label>
         <div class="avatar-selector">
           <div id="avatar-dropdown-container" class="avatar-dropdown">
             <input
               type="text"
               id="player-name-input"
-              placeholder="Digite seu nome"
+              data-translate-placeholder-key="playerNamePlaceholder"
               aria-label="Digite seu nome"
             />
-            <div id="avatar-dropdown-selected" class="avatar-dropdown-selected" aria-label="Selecione seu avatar">
+            <div id="avatar-dropdown-selected" class="avatar-dropdown-selected" data-translate-aria-label-key="selectAvatar">
               <img
-                src="https://api.dicebear.com/8.x/adventurer/svg?seed=1"
-                class="avatar-option"
+                src="https://api.dicebear.com/8.x/adventurer/svg?seed=1" alt="Avatar 1"
+                id="avatar-option"
                 data-avatar-id="1"
               />
               <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
@@ -150,17 +160,29 @@
       </div>      
 
       <div id="online-options">
-        <label for="online-label" id="online-label"><strong>Modo online</strong></label>
-        <button id="create-game-btn" title="Criar uma sala">Criar sala</button>
+        <label id="online-label">
+          <i class="fad fa-globe-wifi"></i>
+          <strong data-translate-key="onlineMode">Modo online</strong>
+        </label>
+
+        <button id="create-game-btn" data-translate-title-key="createRoomTitle">
+          <i class="fas fa-plus"></i>
+          <span data-translate-key="createRoom">Criar sala</span>
+        </button>
+
         <div id="join-game-options">
-          <input type="text" id="game-id-input" placeholder="Código da sala" />
-          <button id="join-game-btn" title="Entrar em uma sala">
-            Entrar na sala
+          <input type="text" id="game-id-input" data-translate-placeholder-key="roomCodePlaceholder" />
+          <button id="join-game-btn" data-translate-title-key="joinRoomTitle">
+            <i class="fas fa-door-open"></i>
+            <span data-translate-key="joinRoom">Entrar na sala</span>
           </button>
         </div>
-        <button id="find-random-game-btn" title="Entrar em uma partida aleatória">
-          Entrar em partida aleatória
+
+        <button id="find-random-game-btn" data-translate-title-key="findRandomTitle">
+          <i class="fas fa-dice"></i>
+          <span data-translate-key="findRandom">Entrar em partida aleatória</span>
         </button>
+
         <div id="server-info">
           <span id="player-online-count"></span>
           <span id="active-games-count"></span>
@@ -168,49 +190,59 @@
       </div>
 
       <div id="practice-game-options">
-        <label for="practice-label" id="practice-label"><strong>Modo Treino</strong></label>
-
+        <label id="practice-label">
+          <i class="fad fa-wifi-slash"></i>
+          <strong data-translate-key="practiceMode">Modo Offline</strong>
+        </label>
         <div id="game-mode-options" class="options">
-        <label for="player-count-select" class="small">Modo de jogo:</label>
+        <label for="player-count-select" class="small" data-translate-key="gameMode">Modo de jogo:</label>
         <select id="player-count-select" aria-label="Modo de jogo">
-          <option value="0" selected disabled>Selecione o modo de jogo</option>
-          <option value="2.2">2 Jogadores (1 vs 1)</option>
-          <option value="3.3">3 Jogadores (1 vs 1 vs 1)</option>
-          <option value="4.2">4 Jogadores (2 vs 2)</option>
-          <option value="6.3">6 Jogadores (2 vs 2 vs 2)</option>
-          <option value="6.2">6 Jogadores (3 vs 3)</option>
-          <option value="8.2">8 Jogadores (4 vs 4)</option>
-          <option value="9.3">9 Jogadores (3 vs 3 vs 3)</option>
-          <option value="10.2">10 Jogadores (5 vs 5)</option>
-          <option value="12.2">12 Jogadores (6 vs 6)</option>
-          <option value="12.3">12 Jogadores (4 vs 4 vs 4)</option>
+          <option value="0" selected disabled data-translate-key="selectGameMode">Selecione o modo de jogo</option>
+          <option value="2.2" data-translate-key="gameModes.2p">2 Jogadores (1 vs 1)</option>
+          <option value="3.3" data-translate-key="gameModes.3p">3 Jogadores (1 vs 1 vs 1)</option>
+          <option value="4.2" data-translate-key="gameModes.4p">4 Jogadores (2 vs 2)</option>
+          <option value="6.2" data-translate-key="gameModes.6p_2teams">6 Jogadores (3 vs 3)</option>
+          <option value="6.3" data-translate-key="gameModes.6p_3teams">6 Jogadores (2 vs 2 vs 2)</option>
+          <option value="8.2" data-translate-key="gameModes.8p">8 Jogadores (4 vs 4)</option>
+          <option value="9.3" data-translate-key="gameModes.9p">9 Jogadores (3 vs 3 vs 3)</option>
+          <option value="10.2" data-translate-key="gameModes.10p">10 Jogadores (5 vs 5)</option>
+          <option value="12.2" data-translate-key="gameModes.12p_2teams">12 Jogadores (6 vs 6)</option>
+          <option value="12.3" data-translate-key="gameModes.12p_3teams">12 Jogadores (4 vs 4 vs 4)</option>
         </select>
       </div>
 
         <div id="difficulty-options" class="options">
-          <label for="difficulty-select" class="small">Dificuldade:</label>
+          <label for="difficulty-select" class="small" data-translate-key="difficulty">Dificuldade:</label>
           <select id="difficulty-select" aria-label="Dificuldade">
-            <option value="0" selected disabled>Selecione a dificuldade</option>
-            <option value="easy">Fácil</option>
-            <option value="medium">Médio</option>
-            <option value="hard">Difícil</option>
-            <option value="expert">Especialista</option>
+            <option value="0" selected disabled data-translate-key="selectDifficulty">Selecione a dificuldade</option>
+            <option value="easy" data-translate-key="difficultyOptions.easy">Fácil</option>
+            <option value="medium" data-translate-key="difficultyOptions.medium">Médio</option>
+            <option value="hard" data-translate-key="difficultyOptions.hard">Difícil</option>
+            <option value="expert" data-translate-key="difficultyOptions.expert">Especialista</option>
           </select>
         </div>
-        <button id="start-practice-btn" title="Novo jogo contra bots">
-          Novo jogo contra bots
+        <button id="start-practice-btn" data-translate-title-key="newBotGameTitle">
+          <i class="fas fa-robot"></i>
+          <span data-translate-key="newBotGame">Novo jogo</span>
         </button>
-        <button id="join-practice-btn" title="Continuar jogo contra bots">
-          Continuar jogo contra bots
+        <button id="join-practice-btn" data-translate-title-key="continueBotGameTitle">
+          <i class="fas fa-play"></i>
+          <span data-translate-key="continueBotGame">Continuar jogo</span>
         </button>
+      </div>
+
+      <div id="config-options">
+        <button class="config-btn" data-translate-title-key="settings">
+            <i class="fas fa-cog"></i>
+            <span data-translate-key="settings">Configurações</span>
+          </button>
       </div>
 
       <div id="installApp">
         <button
           id="installAppButton"
-          title="Instale o aplicativo"
           aria-label="Instalar app"
-          title="Instalar app"
+          data-translate-title-key="installApp"
         ></button>
       </div>
       <div class="connection-status-container">
@@ -221,6 +253,16 @@
        <a href="https://wendell-araujo.web.app/" target="_blank" rel="noopener noreferrer"><img src="assets/img/logo-wa.webp" alt="Logo do deseenvolvedor Wendell Araujo Dev" width="40"></a> 
         <span>Desenvolvido por Wendell Araujo Dev</span>
       </div>
+
+      <footer>
+        <p>
+          © 2025 Sequence Multiplayer | 
+          <a href="rules.html" data-translate-key="footer.rules">Regras do Jogo</a> | 
+          <a href="about.html" data-translate-key="footer.about">Sobre</a> | 
+          <a href="contact.html" data-translate-key="footer.contact">Contato</a> | 
+          <a href="privacy.html" data-translate-key="footer.privacy">Política de Privacidade</a>
+        </p>
+      </footer>
     </div>
 
     <div id="game-container" style="display: none">
@@ -228,13 +270,13 @@
         <div class="board-side-text left">
           <div class="jack-container one-eye-jack-container">
             <div class="one-eye-jack js"></div>
-            <span class="jack-text">um olho removem</span>
+            <span class="jack-text" data-translate-key="oneEyeRemoves">um olho removem</span>
             <div class="one-eye-jack jh"></div>
           </div>
           <span class="sequence-text">SEQUENCE</span>
           <div class="jack-container two-eye-jack-container">
             <div class="two-eye-jack jc"></div>
-            <span class="jack-text">dois olhos adicionam</span>
+            <span class="jack-text" data-translate-key="twoEyesAdd">dois olhos adicionam</span>
             <div class="two-eye-jack jd"></div>
           </div>
         </div>
@@ -244,13 +286,13 @@
         <div class="board-side-text right">
           <div class="jack-container one-eye-jack-container">
             <div class="one-eye-jack js"></div>
-            <span class="jack-text">um olho removem</span>
+            <span class="jack-text" data-translate-key="oneEyeRemoves">um olho removem</span>
             <div class="one-eye-jack jh"></div>
           </div>
           <span class="sequence-text">SEQUENCE</span>
           <div class="jack-container two-eye-jack-container">
             <div class="two-eye-jack jc"></div>
-            <span class="jack-text">dois olhos adicionam</span>
+            <span class="jack-text" data-translate-key="twoEyesAdd">dois olhos adicionam</span>
             <div class="two-eye-jack jd"></div>
           </div>
         </div>
@@ -260,40 +302,38 @@
         <div class="persistent-game-info" style="display: none">
           <div>
             Sala: <strong class="game-id-text"></strong>
-            <button class="copy-id-btn" title="Copiar código da sala">
+            <button class="copy-id-btn" data-translate-title-key="copyRoomCode">
               <i class="fas fa-copy"></i>
             </button>
           </div>
-          <button class="toggle-sound-btn" title="Desativar som">
-            <i class="fas fa-volume-high"></i>
+          <button class="config-btn" data-translate-title-key="settings">
+            <i class="fas fa-cog"></i>
           </button>
-          <button class="report-bug-btn" title="Reportar um Bug">
-            <i class="fas fa-bug"></i>
-          </button>
-          <button class="help-btn" title="Regras do jogo">
+          <button class="help-btn" data-translate-title-key="gameRules">
             <i class="far fa-circle-info"></i>
           </button>
-          <button class="leave-game-btn" title="Sair do jogo">
+          <button class="leave-game-btn" data-translate-title-key="leaveGame">
             <i class="fas fa-right-from-bracket"></i>
           </button>
         </div>
 
-        <h2 id="current-player-text">Aguardando...</h2>
+        <h2 id="current-player-text" data-translate-key="waiting">Aguardando...</h2>
 
-        <p id="game-message">Bem-vindo ao Sequence!</p>
+        <p id="game-message" data-translate-key="welcome">Bem-vindo ao Sequence!</p>
         <div id="team-info"></div>
 
-        <h3 class="hand-title">Sua Mão:</h3>
+        <h3 class="hand-title" data-translate-key="yourHand">Sua Mão:</h3>
         <div class="cards-container">
           <div id="player-hand"></div>
           <div class="deck-discard-container">
             <div id="deck-container">
-              <div id="deck-pile" title="Comprar carta"></div>
+              <div id="deck-pile" data-translate-title-key="buyCard"></div>
               <span id="deck-count"></span>
             </div>
-            <div id="discard-container">
-              <div id="discard-pile" title="Última carta jogada"></div>
-              <span id="discard-count">Descarte</span>
+
+            <div id="discard-container" style="display: none">
+              <div id="discard-pile" data-translate-title-key="lastCardPlayedTitle"></div>
+              <span id="discard-count" data-translate-key="lastCardPlayed">Última<br />jogada</span>
             </div>
           </div>
         </div>
@@ -302,8 +342,8 @@
 
     <div id="chat-container">
       <div class="chat-header">
-        <h3>Chat do Jogo</h3>
-        <button id="hide-chat-btn" title="Fechar chat">
+        <h3 data-translate-key="gameChat">Chat do Jogo</h3>
+        <button id="hide-chat-btn" data-translate-title-key="closeChat">
           <i class="fas fa-xmark"></i>
         </button>
       </div>
@@ -312,16 +352,16 @@
         <input
           type="text"
           id="chat-input"
-          placeholder="Digite sua mensagem..."
+          data-translate-placeholder-key="chatPlaceholder"
         />
-        <button id="send-chat-btn" title="Enviar mensagem">
+        <button id="send-chat-btn" data-translate-title-key="sendChatMessage">
           <i class="fas fa-paper-plane"></i>
         </button>
       </div>
     </div>
     <div class="chat-btn-container">
-      <button id="show-chat-btn" title="Abrir chat">
-        <i class="fas fa-message"></i> Chat
+      <button id="show-chat-btn" data-translate-title-key="openChat">
+        <i class="fas fa-message"></i> <span data-translate-key="chat">Chat</span>
       </button>
     </div>
 
@@ -330,34 +370,56 @@
         <div class="persistent-game-info">
           <div>
             Sala: <strong class="game-id-text"></strong>
-            <button class="copy-id-btn" title="Copiar código da sala">
+            <button class="copy-id-btn" data-translate-title-key="copyRoomCode">
               <i class="fas fa-copy"></i>
             </button>
           </div>
-          <button class="toggle-sound-btn" title="Desativar som">
-            <i class="fas fa-volume-high"></i>
+          <button class="config-btn" data-translate-title-key="settings">
+            <i class="fas fa-cog"></i>
           </button>
-          <button class="report-bug-btn" title="Reportar um Bug">
-            <i class="fas fa-bug"></i>
-          </button>
-          <button class="help-btn" title="Regras do jogo">
+          <button class="help-btn" data-translate-title-key="gameRules">
             <i class="far fa-circle-info"></i>
           </button>
-          <button class="leave-game-btn" title="Sair da sala">
+          <button class="leave-game-btn" data-translate-title-key="leaveGame">
             <i class="fas fa-right-from-bracket"></i>
           </button>
         </div>
-        <h2>Escolha sua Equipe</h2>
+        <h2 data-translate-key="chooseYourTeam">Escolha sua Equipe</h2>
         <div class="player-count-info"></div>
-        <p>
+        <p data-translate-key="teamSelectionInstructions">
           Os jogadores devem se dividir entre as equipes. O anfitrião iniciará a
           partida quando as equipes estiverem completas e balanceadas.
         </p>
         <div id="teams-container"></div>
+        <div id="host-controls-container">
+          <div class="privacy-toggle-container">
+              <span id="privacy-public-label" data-translate-key="publicRoom">Pública</span>
+              <label class="switch">
+                  <input type="checkbox" id="privacy-toggle-checkbox">
+                  <span class="slider round"></span>
+              </label>
+              <span id="privacy-private-label"  data-translate-key="privateRoom">Privada</span>
+          </div>
+        </div>
         <div id="start-game-container"></div>
       </div>
     </div>
-    <script src="script/script.js"></script>
-    <script src="script/botGameLocal.js"></script>
+    
+    <div id="ad-overlay">
+      <div id="ad-modal">
+        <button id="ad-close-btn" title="Fechar">×</button>
+        <h3 data-translate-key="adSupportTitle">Apoie o desenvolvedor</h3>
+        <p data-translate-key="adSupportText">Um anúncio será exibido para ajudar a manter o jogo gratuito.</p>
+        <div id="ad-placeholder">
+          <div style="width: 320px; height: 100px; background: #f0f0f0; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; text-align: center; color: #333;">
+            (Espaço reservado para o anúncio)
+          </div>
+        </div>
+        <p class="ad-continue-message" data-translate-key="adContinueText">Você poderá continuar para o jogo em <span id="ad-timer">5</span> segundos...</p>
+      </div>
+    </div>
+    <script src="script/ad.js"></script>
+    <script src="script/main.js"></script>
+    <script src="script/bot.js"></script>
   </body>
 </html>

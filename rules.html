@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Informações sobre o jogo de tabuleiro Sequence Online - Regras, Contato, Sobre e Privacidade."
+    />
+    <title>Regras do Jogo - Sequence Online</title>
+    <meta name="theme-color" content="#4d6a95" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Sequence Online" />
+    <meta name="apple-mobile-web-app-title" content="Sequence Online" />
+    <meta name="msapplication-starturl" content="/index.html" />
+    <meta property="og:site_name" content="Sequence Online" />
+    <link rel="apple-touch-icon" sizes="57x57" href="ios/57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="ios/60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="ios/72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="ios/76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="ios/114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="ios/120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="ios/144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="ios/152.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="ios/512.png" />
+    <link rel="shortcut icon" href="assets/img/logo.png" />
+    <link rel="stylesheet" href="style/reset.css" />
+    <link rel="stylesheet" href="style/style.css" />
+    <link rel="stylesheet" href="style/info.css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="script/translate.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div id="language-switcher-container"></div>
+
+      <div id="content-container">
+        <h1>Regras do Jogo Sequence</h1>
+
+        <h2>Objetivo do Jogo</h2>
+        <p>O objetivo é ser o primeiro jogador ou equipe a formar o número necessário de "sequências". Uma sequência é uma linha contínua de 5 fichas da mesma cor no tabuleiro. A linha pode ser horizontal, vertical ou diagonal.</p>
+        <p>O número de sequências necessárias para vencer depende do número de equipes:</p>
+        <ul>
+            <li><strong>2 Equipes:</strong> São necessárias 2 sequências.</li>
+            <li><strong>3 Equipes:</strong> É necessária 1 sequência.</li>
+        </ul>
+
+        <h2>Começando o Jogo</h2>
+        <p>No início, as cartas são embaralhadas e distribuídas aos jogadores. O número de cartas que cada um recebe depende do número de jogadores na partida. O tabuleiro possui 100 espaços, representando quase todas as cartas do baralho, duplicadas.</p>
+
+        <h2>Sua Vez de Jogar</h2>
+        <p>Na sua vez, você deve seguir estes passos:</p>
+        <ol>
+            <li><strong>Escolha uma carta da sua mão:</strong> Selecione a carta que corresponde a um espaço livre no tabuleiro onde você deseja colocar sua ficha.</li>
+            <li><strong>Coloque sua ficha:</strong> Clique no espaço correspondente no tabuleiro para colocar uma ficha da cor da sua equipe.</li>
+            <li><strong>Compre uma nova carta:</strong> Após jogar, você deve comprar uma nova carta do baralho para manter o número de cartas na sua mão.</li>
+        </ol>
+
+        <h2>Cartas Especiais</h2>
+        <ul>
+            <li><strong>Valetes de Dois Olhos (Copas e Ouros):</strong> São "coringas". Você pode usar um Valete de dois olhos para colocar sua ficha em QUALQUER espaço livre no tabuleiro.</li>
+            <li><strong>Valetes de Um Olho (Espadas e Paus):</strong> São "removedores". Você pode usar um Valete de um olho para remover QUALQUER ficha de um oponente do tabuleiro (exceto fichas que já fazem parte de uma sequência completa).</li>
+        </ul>
+        <p>Os quatro cantos do tabuleiro são espaços livres e contam como uma ficha para qualquer jogador. Você pode usar um canto para completar sua sequência com apenas 4 fichas.</p>
+
+        <h2>Final do Jogo</h2>
+        <p>O jogo termina assim que um jogador ou equipe completa o número necessário de sequências. Essa equipe é declarada a vencedora.</p>
+      </div>
+    </div>
+    <script src="script/info.js"></script>
+  </body>
+</html>
