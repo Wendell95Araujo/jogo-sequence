@@ -3,7 +3,7 @@
 **Sequence Online** é uma versão digital multiplayer do clássico jogo de tabuleiro **Sequence**, feita para navegador e Android. Jogue com amigos ou bots em partidas estratégicas de até **12 jogadores**, direto do seu navegador ou como aplicativo!
 
 🔗 **Jogue agora online:**  
-https://game-sequence-multiplayer.vercel.app/
+https://game-sequence-multiplayer.web.app/
 
 📦 **Versão Android (.apk):**  
 Disponível para download no itch.io:  
