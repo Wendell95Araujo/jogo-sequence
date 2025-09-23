@@ -11,10 +11,11 @@ function sendMessageToClients(message) {
     });
 }
 
-const CACHE_NAME = "tasks-cache-v2.7.0";
+const CACHE_NAME = "tasks-cache-v1.0.0";
 
 const LOCAL_FILES = [
   "/",
+  "404.html",
   "/index.html",
   "/privacy.html",
   "/about.html",

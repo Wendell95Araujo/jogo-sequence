@@ -3,6 +3,7 @@ let currentLanguage = "en";
 
 const translations = {
   pt: {
+    loading: "Carregando...",
     pageTitle: "Sequence Online – Jogo de Tabuleiro Multiplayer (2 a 12 Jogadores)",
     pageDescription: "Jogue Sequence Online com até 12 jogadores! Um jogo de tabuleiro multiplayer gratuito para jogar com amigos ou contra outros online. Crie salas, entre por código ou entre em partidas aleatórias.",
     lobbyTitle: "Lobby do jogo",
@@ -936,8 +937,13 @@ const translations = {
       contact: "Contato",
       privacy: "Política de Privacidade"
     },
+    error404Title: "404 - Página Não Encontrada | Sequence Online",
+    error404Heading: "Oops! Carta Errada...",
+    error404Message: "Parece que esta página se perdeu no baralho ou é uma \"carta morta\". Não se preocupe, vamos embaralhar de novo e te levar de volta para o jogo.",
+    backToLobby: "Voltar para o Lobby",
   },
   en: {
+    loading: "Loading...",
     pageTitle: "Sequence Online – Multiplayer Board Game (2 to 12 Players)",
     pageDescription: "Play Sequence Online with up to 12 players! A free multiplayer board game to play with friends or against others online. Create rooms, join by code, or find random matches.",
     lobbyTitle: "Game Lobby",
@@ -1870,8 +1876,13 @@ const translations = {
       contact: "Contact",
       privacy: "Privacy Policy"
     },
+    error404Title: "404 - Page Not Found | Sequence Online",
+    error404Heading: "Oops! Wrong Card...",
+    error404Message: "It seems this page got lost in the shuffle or it's a \"dead card\". Don't worry, let's shuffle again and get you back to the game.",
+    backToLobby: "Back to Lobby",
   },
   es: {
+    loading: "Cargando...",
     pageTitle: "Sequence Online – Juego de Mesa Multijugador (2 a 12 Jugadores)",
     pageDescription: "¡Juega Sequence Online con hasta 12 jugadores! Un juego de mesa multijugador gratuito para jugar con amigos o contra otros en línea. Crea salas, únete con un código o entra en partidas aleatorias.",
     lobbyTitle: "Lobby del Juego",
@@ -2804,6 +2815,10 @@ const translations = {
       contact: "Contacto",
       privacy: "Política de Privacidad"
     },
+    error404Title: "404 - Página No Encontrada | Sequence Online",
+    error404Heading: "¡Vaya! Carta Equivocada...",
+    error404Message: "Parece que esta página se perdió en la baraja o es una \"carta muerta\". No te preocupes, vamos a barajar de nuevo y llevarte de vuelta al juego.",
+    backToLobby: "Volver al Lobby",
   }
 }
 
