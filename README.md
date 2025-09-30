@@ -49,7 +49,7 @@ Vence quem completar o número necessário de sequências!
 ## 📁 Estrutura do Projeto
 
 - `index.html` – Tela inicial, lobby e opções do jogo
-- `script.js` – Controle de partidas online, lobby e interações
+- `main.js` – Controle de partidas online, lobby e interações
 - `botGameLocal.js` – Lógica do modo treino com bots (IA)
 - `manifest.json` – Configuração de PWA
 - `style/`, `assets/` – Estilos, cartas, avatares e ícones
