@@ -1,6 +1,6 @@
-# 🎮 Sequence Online
+# 🎮 Row 5 Online
 
-**Sequence Online** é uma versão digital multiplayer do clássico jogo de tabuleiro **Sequence**, feita para navegador e Android. Jogue com amigos ou bots em partidas estratégicas de até **12 jogadores**, direto do seu navegador ou como aplicativo!
+**Row 5 Online** é uma versão digital multiplayer do clássico jogo de tabuleiro **Sequence**, feita para navegador e Android. Jogue com amigos ou bots em partidas estratégicas de até **12 jogadores**, direto do seu navegador ou como aplicativo!
 
 🔗 **Jogue agora online:**  
 https://game-sequence-multiplayer.web.app/
@@ -83,5 +83,5 @@ Criado para fins **educacionais e recreativos**. Todos os direitos dos elementos
 
 Feito por [Wendell Araújo](https://github.com/wendell-araujo)  
 🔗 Jogo no itch.io: https://wendell95araujo.itch.io/sequence-online  
-🌐 Projeto Web: https://wendell-araujo.vercel.app/
+🌐 Projeto Web: https://wendell-araujo.web.app/
 
