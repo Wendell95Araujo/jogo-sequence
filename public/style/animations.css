@@ -1,0 +1,393 @@
+/**
+ * animations.css — Animações, celebrações e View Transitions do Row 5
+ */
+
+/* ============================================================
+   VIEW TRANSITIONS (cross-document e same-document)
+   ============================================================ */
+
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: vt-slide-out 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+::view-transition-new(root) {
+  animation: vt-slide-in 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes vt-slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-20%);
+    opacity: 0;
+  }
+}
+@keyframes vt-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ============================================================
+   SEQUÊNCIA COMPLETA: pulso dourado
+   ============================================================ */
+
+@keyframes pulse-gold {
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+      0 0 20px rgba(255, 215, 0, 0.9),
+      0 0 40px rgba(255, 215, 0, 0.4);
+    transform: scale(1.12);
+  }
+}
+
+.ficha-sequencia-completa {
+  animation: pulse-gold 0.7s ease-in-out 3 !important;
+  z-index: 10;
+  position: relative;
+}
+
+/* ============================================================
+   CHUVA DE CONFETES (vitória e derrota)
+   ============================================================ */
+
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 99999;
+  overflow: hidden;
+}
+
+.confete {
+  position: absolute;
+  top: -20px;
+  opacity: 0.9;
+  animation: confete-cair linear forwards;
+}
+
+@keyframes confete-cair {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes rainDrop {
+  0% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+@keyframes splashAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  20% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+
+/* ============================================================
+   DERROTA: Shake na tela
+   ============================================================ */
+
+@keyframes shake-defeat {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-3px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(3px);
+  }
+}
+
+.shake-defeat {
+  animation: shake-defeat 0.4s ease-in-out !important;
+}
+
+/* ============================================================
+   EMPATE: Partículas douradas flutuando para cima
+   ============================================================ */
+
+.particula-empate {
+  position: fixed;
+  bottom: -10px;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, #ffd700, #ffa000);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  animation: float-up ease-out forwards;
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-100vh) scale(0.5);
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   FALLBACK: Fade para browsers sem View Transitions
+   ============================================================ */
+
+.fade-out-transition {
+  animation: vt-fade-out 0.2s ease-out forwards;
+}
+
+.fade-in-transition {
+  animation: vt-fade-in 0.25s ease-in forwards;
+}
+
+/* ============================================================
+   LOADING SCREEN
+   ============================================================ */
+
+@keyframes loading-slide-up {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  90% {
+    transform: translateY(-50%);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes floatCard {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--rotation, 0deg));
+  }
+  50% {
+    transform: translateY(-15px) rotate(var(--rotation, 0deg));
+  }
+}
+
+@keyframes pulseNumber {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes pulseText {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ============================================================
+   TABULEIRO: Highlighted slots
+   ============================================================ */
+
+@keyframes pulse-yellow {
+  0% {
+    box-shadow: inset 0 0 12px 3px rgba(255, 255, 0, 0.6);
+  }
+  50% {
+    box-shadow: inset 0 0 18px 6px rgba(255, 255, 0, 0.9);
+  }
+  100% {
+    box-shadow: inset 0 0 12px 3px rgba(255, 255, 0, 0.6);
+  }
+}
+
+@keyframes pulse-red-removal {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ============================================================
+   DICA (Hint): Pulso dourado no card-slot
+   ============================================================ */
+
+@keyframes pulse-gold-hint {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(241, 196, 15, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(241, 196, 15, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(241, 196, 15, 0);
+  }
+}
+
+/* ============================================================
+   CARTAS: Pulsos e estados
+   ============================================================ */
+
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 8px 3px rgba(39, 174, 96, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 12px 6px rgba(39, 174, 96, 0.9);
+  }
+  100% {
+    box-shadow: 0 0 8px 3px rgba(39, 174, 96, 0.6);
+  }
+}
+
+@keyframes pulse-red-deadcard {
+  0% {
+    box-shadow: 0 0 10px 3px rgba(255, 0, 0, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 18px 6px rgba(255, 0, 0, 0.9);
+  }
+  100% {
+    box-shadow: 0 0 10px 3px rgba(255, 0, 0, 0.7);
+  }
+}
+
+/* ============================================================
+   DECK: Pulso de espera para compra
+   ============================================================ */
+
+@keyframes deck-pulse {
+  0%,
+  100% {
+    outline: 3px solid rgba(255, 215, 0, 0.4);
+    outline-offset: 1px;
+  }
+  50% {
+    outline: 4px solid rgba(255, 215, 0, 0.9);
+    outline-offset: 2px;
+  }
+}
+
+/* ============================================================
+   BOTÕES: Pulsos de notificação
+   ============================================================ */
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-animation {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px 15px rgba(0, 123, 255, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+  }
+}
+
+/* ============================================================
+   TIMER: Pulso urgente (≤3 segundos)
+   ============================================================ */
+
+@keyframes timer-pulse-urgent {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.5);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 16px rgba(231, 76, 60, 0.9);
+  }
+}
+
+/* ============================================================
+   GERAL: Fade in
+   ============================================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

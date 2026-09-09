@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /> 
+        
+        <meta name="description" content="Jogue Row 5 Online com até 12 jogadores! Um jogo de tabuleiro multiplayer gratuito para jogar com amigos ou contra outros online. Crie salas, entre por código ou entre em partidas aleatórias." />
+        <meta name="keywords" content="sequence online, sequence game online, play sequence online, sequence board game online, sequence card game multiplayer, sequence game online free, play sequence online with friends, sequence game 2 players online, jogo sequence online, jogo de tabuleiro online gratis, jogar sequence com amigos, juego sequence online, juego de mesa online con amigos, juego de mesa online gratis, row 5 online, row 5 game" />
+        <meta name="author" content="Wendell Araujo Dev" />
+        
+        <link rel="canonical" href="https://YOUR_DOMAIN/" />
+        <link rel="alternate" hreflang="pt" href="https://YOUR_DOMAIN/?lang=pt" />
+        <link rel="alternate" hreflang="en" href="https://YOUR_DOMAIN/?lang=en" />
+        <link rel="alternate" hreflang="es" href="https://YOUR_DOMAIN/?lang=es" />
+        <link rel="alternate" hreflang="x-default" href="https://YOUR_DOMAIN/" />
+    
+        <title>Row 5 Online – Jogo de Tabuleiro Multiplayer Grátis (2 a 12 Jogadores)</title>
+        
+        <meta name="theme-color" content="#1a252f" />
+        <meta name="view-transition" content="same-origin" />
+        <link rel="manifest" href="manifest.json?version=2.0.4" />
+        
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="application-name" content="Row 5 Online" /> 
+        <meta name="apple-mobile-web-app-title" content="Row 5 Online" />
+        <meta name="msapplication-starturl" content="/game.html" />
+    
+        <meta property="og:title" content="Row 5 Online – Jogo de Tabuleiro Multiplayer Grátis" />
+        <meta property="og:description" content="Jogue Row 5 Online com até 12 jogadores! Um jogo de tabuleiro multiplayer gratuito para jogar com amigos ou online. Simples, divertido e direto do navegador." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://YOUR_DOMAIN/" />
+        <meta property="og:image" content="https://YOUR_DOMAIN/assets/img/thumb.png" />
+        <meta property="og:site_name" content="Row 5 Online" />
+        <meta property="og:locale" content="pt_BR" />
+        <meta property="og:locale:alternate" content="en_US" />
+        <meta property="og:locale:alternate" content="es_ES" />
+    
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Row 5 Online – Jogo Multiplayer até 12 Jogadores" />
+        <meta name="twitter:description" content="Crie partidas, entre por código ou jogue aleatoriamente! Jogo de tabuleiro multiplayer gratuito direto do navegador." />
+        <meta name="twitter:image" content="https://YOUR_DOMAIN/assets/img/thumb.png" />
+    
+        <link href="lib/fontawesome-pro-6.7.2-web/css/all.min.css" rel="stylesheet"/>
+        
+        <link rel="apple-touch-icon" sizes="57x57" href="ios/57.png" />
+        <link rel="apple-touch-icon" sizes="60x60" href="ios/60.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="ios/72.png" />
+        <link rel="apple-touch-icon" sizes="76x76" href="ios/76.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="ios/114.png" />
+        <link rel="apple-touch-icon" sizes="120x120" href="ios/120.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="ios/144.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="ios/152.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="ios/180.png" />
+        <link rel="apple-touch-icon" sizes="512x512" href="ios/512.png" />
+        <link rel="shortcut icon" href="assets/img/logo.webp" />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+        <link rel="stylesheet" href="style/reset.css?v=4" />
+        <link rel="stylesheet" href="style/style.css?version=3.1.95" />
+        <link rel="stylesheet" href="style/landing.css?version=3.1.95" />
+        <link rel="stylesheet" href="style/animations.css?version=3.1.95" />
+        <link rel="stylesheet" href="style/cookie-consent.css?version=3.1.95" />
+
+        <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "VideoGame",
+              "name": "Row 5 Online",
+              "alternateName": ["Sequence Online", "Sequence Board Game Online", "Jogo Sequence Online"],
+              "description": "Play the classic Sequence board game online for free with 2-12 players. Create rooms, join by code, play with friends or challenge AI opponents.",
+              "genre": ["Board Game", "Strategy Game", "Card Game"],
+              "playMode": ["MultiPlayer", "SinglePlayer"],
+              "numberOfPlayers": {"@type": "QuantitativeValue", "minValue": 2, "maxValue": 12},
+              "applicationCategory": "Game",
+              "operatingSystem": "Any",
+              "gamePlatform": ["Web Browser", "Android", "iOS"],
+              "url": "https://YOUR_DOMAIN/",
+              "image": "https://YOUR_DOMAIN/assets/img/thumb.png",
+              "inLanguage": ["pt-BR", "en", "es"],
+              "author": {
+                "@type": "Person",
+                "name": "Wendell Araujo",
+                "url": "https://wendell-araujo.web.app/"
+              },
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD",
+                "availability": "https://schema.org/InStock"
+              },
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.7",
+                "ratingCount": "22",
+                "bestRating": "5"
+              }
+            }
+        </script>
+        <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": [
+                {
+                  "@type": "Question",
+                  "name": "Como jogar Sequence online grátis?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Acesse Row 5 Online, clique em 'Entrar no Lobby e Jogar', crie uma sala ou entre em uma partida aleatória. Sem download, sem cadastro obrigatório. Jogue direto no navegador em qualquer dispositivo."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Posso jogar Sequence online com amigos?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Sim! Crie uma sala privada e compartilhe o código com seus amigos. Você pode jogar com 2 a 12 jogadores em equipes de 2 ou 3."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "O Sequence está disponível como aplicativo?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Row 5 Online é um Progressive Web App (PWA) que pode ser instalado no Android, iOS e desktop. Funciona offline e tem experiência de app nativo."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Preciso criar conta para jogar?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Não é obrigatório. Você pode jogar online usando apenas um nome. Porém, criar conta salva seu progresso, ranking e histórico de partidas."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Quantos jogadores podem jogar ao mesmo tempo?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "De 2 a 12 jogadores divididos em 2 ou 3 equipes. Também é possível jogar sozinho contra a inteligência artificial com vários níveis de dificuldade."
+                  }
+                }
+              ]
+            }
+        </script>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=YOUR_ADSENSE_CLIENT_ID" crossorigin="anonymous"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=YOUR_MEASUREMENT_ID"></script>
+        <script>
+           window.dataLayer = window.dataLayer || [];
+           function gtag(){dataLayer.push(arguments);}
+           gtag('js', new Date());
+    
+           gtag('config', 'YOUR_MEASUREMENT_ID');
+        </script>
+    </head>
+<body>
+    <div id="language-switcher-container"></div>
+
+    <header class="hero-section">
+        <div class="hero-content">
+            <div class="hero-title-wrapper">
+                <img src="assets/img/logo.webp" alt="Logo Row 5 Online" class="hero-mini-logo" width="60" height="60">
+                <h1 id="title">Row 5 Online</h1>
+            </div>
+
+            <p class="subtitle" data-translate-key="landing.hero.subtitle">
+                Use suas cartas, trace sua estratégia e forme linhas de 5. O jogo de tabuleiro multiplayer gratuito para desafiar amigos, o mundo ou a IA.
+            </p>
+            
+            <div class="hero-actions">
+                <a href="game.html" class="cta-button">
+                    <i class="fas fa-gamepad-alt"></i>
+                    <span data-translate-key="back_to_game">Entrar no Lobby e Jogar</span>
+                </a>
+                <a href="#rules" class="secondary-button">
+                    <i class="fas fa-book-open"></i>
+                    <span data-translate-key="footer.rules">Regras do Jogo</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <img src="assets/img/hero.webp" alt="Row 5 Cartas e Estratégia" class="hero-main-image" fetchpriority="high" width="574" height="383">
+
+            <div id="hero-rating-badge" class="hero-rating-badge" style="display: none;">
+                <div id="rating-skeleton" class="rating-skeleton">
+                    <div class="skeleton-line large"></div>
+                    <div class="skeleton-line small"></div>
+                </div>
+            
+                <div id="rating-content" style="display: none;">
+                    <div class="rating-stars">
+                        <span id="hero-rating-value">--</span>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="rating-text">
+                        <span id="hero-rating-count">--</span> <span data-translate-key="landing.reviews.reviewsLabel">avaliações</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="#features" class="scroll-down-arrow" aria-label="Rolar para baixo">
+            <i class="fas fa-chevron-down"></i>
+        </a>
+    </header>
+
+    <main class="content-wrapper">
+        <section id="features">
+            <h2 data-translate-key="landing.features.title">Recursos Principais</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-users"></i>
+                    <h3 data-translate-key="landing.features.multiplayer_title">Multiplayer de 2 a 12 Jogadores</h3>
+                    <p data-translate-key="landing.features.multiplayer_desc">Crie salas privadas para jogar com amigos ou entre em partidas públicas para desafiar jogadores do mundo todo. Nosso sistema suporta diversas configurações de times e jogadores.</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-robot"></i>
+                    <h3 data-translate-key="landing.features.bots_title">Modo Offline com Bots</h3>
+                    <p data-translate-key="landing.features.bots_desc">Não tem com quem jogar? Aprimore suas habilidades no modo offline contra nossa Inteligência Artificial, com múltiplos níveis de dificuldade, do iniciante ao especialista.</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-trophy"></i>
+                    <h3 data-translate-key="landing.features.ranking_title">Ranking Global e Níveis</h3>
+                    <p data-translate-key="landing.features.ranking_desc">Acumule pontos em partidas ranqueadas e suba de nível — de Bronze a Elite. Dispute posições no leaderboard global e ganhe bônus ao vencer adversários mais fortes.</p>
+                </div>
+            </div>
+            <div class="features-more" id="features-more">
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h3 data-translate-key="landing.features.pwa_title">Instale como um Aplicativo (PWA)</h3>
+                        <p data-translate-key="landing.features.pwa_desc">Adicione o Row 5 Online à sua tela inicial! Nossa tecnologia PWA permite que você jogue como se fosse um aplicativo nativo, com acesso rápido e uma experiência imersiva.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-user-plus"></i>
+                        <h3 data-translate-key="landing.features.accounts_title">Contas e Perfil</h3>
+                        <p data-translate-key="landing.features.accounts_desc">Crie sua conta com email ou Google. Tenha um perfil persistente com username único, avatar personalizado e estatísticas salvas na nuvem.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-user-group"></i>
+                        <h3 data-translate-key="landing.features.friends_title">Sistema de Amigos</h3>
+                        <p data-translate-key="landing.features.friends_desc">Adicione amigos, veja quem está online e convide para jogar com um clique. Receba notificações push de convites e pedidos de amizade mesmo com o jogo fechado.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-magnifying-glass"></i>
+                        <h3 data-translate-key="landing.features.matchmaking_title">Matchmaking Inteligente</h3>
+                        <p data-translate-key="landing.features.matchmaking_desc">Encontre partidas em segundos. Nosso sistema busca jogadores reais, envia convites automáticos e cria salas públicas para você nunca ficar sem jogo.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-bell"></i>
+                        <h3 data-translate-key="landing.features.notifications_title">Notificações Push</h3>
+                        <p data-translate-key="landing.features.notifications_desc">Receba alertas quando um amigo quer jogar ou quando recebe um pedido de amizade. Disponível em todos os dispositivos, mesmo com o navegador fechado.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-globe"></i>
+                        <h3 data-translate-key="landing.features.languages_title">3 Idiomas</h3>
+                        <p data-translate-key="landing.features.languages_desc">Jogue em Português, Inglês ou Espanhol. O jogo detecta seu idioma automaticamente e todas as notificações são traduzidas.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="features-toggle-btn" id="features-toggle-btn" onclick="toggleFeatures()">
+                <span data-translate-key="landing.features.showMore">Ver todos os recursos</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </section>
+
+        <section id="reviews" class="section-reviews">
+            <h2 data-translate-key="landing.reviews.title">O que os jogadores dizem</h2>
+            <div class="reviews-summary">
+                <div class="reviews-average">
+                    <span id="landing-rating-value">4.7</span>
+                    <i class="fas fa-star"></i>
+                </div>
+                <span class="reviews-count" id="landing-reviews-count">23 <span data-translate-key="landing.reviews.reviewsLabel">avaliações</span></span>
+            </div>
+            <div class="reviews-carousel-wrapper">
+                <button class="reviews-nav reviews-nav-prev" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+                <div class="reviews-quotes" id="reviews-quotes"></div>
+                <button class="reviews-nav reviews-nav-next" aria-label="Próximo"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </section>
+
+        <section id="about" class="section-highlight">
+            <h2 data-translate-key="footer.about">Sobre Este Jogo</h2>
+            <div data-translate-content-key="content_about_expanded">
+                <p>
+                    Este projeto nasceu da paixão por jogos de tabuleiro e do desejo de criar uma plataforma digital acessível para um dos nossos clássicos favoritos. Desenvolvido como um projeto pessoal para aprimorar habilidades em tecnologias como JavaScript, HTML, CSS e a integração com Firebase para funcionalidades em tempo real, o jogo cresceu para se tornar uma comunidade de jogadores.
+                </p>
+                <p>
+                    Nosso objetivo é oferecer uma versão fiel, gratuita e intuitiva do Sequence, permitindo que amigos e familiares se conectem e joguem juntos, não importa a distância. Projetamos a interface para ser limpa e a jogabilidade fluida, seja você um estrategista veterano ou um novo jogador aprendendo as regras.
+                </p>
+                <p>
+                    Este é um projeto vivo e em constante desenvolvimento. Estamos sempre trabalhando em melhorias, novas funcionalidades e na otimização da experiência. Seu feedback é extremamente valioso para nós. Agradecemos por jogar e fazer parte desta comunidade!
+                </p>
+            </div>
+        </section>
+        
+        <div style="margin: 30px auto; text-align: center; position: relative; z-index: 1;">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="YOUR_ADSENSE_CLIENT_ID"
+                 data-ad-slot="7683046604"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        </div>
+
+        <section id="screenshots" class="screenshots-section section-highlight">
+            <h2 data-translate-key="landing.screenshots.title">Veja o Jogo em Ação</h2>
+            <div class="screenshots-carousel">
+                <button class="carousel-btn prev" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+                <div class="carousel-track">
+                    <div class="screenshot-item desktop-only">
+                        <img src="assets/img/thumb-full.webp" alt="Row 5 Online - Tabuleiro em jogo" loading="lazy" width="840" height="420" />
+                        <span data-translate-key="landing.screenshots.board">Tabuleiro em partida</span>
+                    </div>
+                    <div class="screenshot-item desktop-only">
+                        <img src="assets/img/thumb-full-lobby.webp" alt="Row 5 Online - Lobby do jogo" loading="lazy" width="840" height="420" />
+                        <span data-translate-key="landing.screenshots.lobby">Lobby do jogo</span>
+                    </div>
+                    <div class="screenshot-item mobile-only">
+                        <img src="assets/img/thumb-mobile.webp" alt="Row 5 Online - Versão mobile" loading="lazy" />
+                        <span data-translate-key="landing.screenshots.board">Tabuleiro em partida</span>
+                    </div>
+                    <div class="screenshot-item mobile-only">
+                        <img src="assets/img/thumb-mobile-lobby.webp" alt="Row 5 Online - Lobby mobile" loading="lazy" />
+                        <span data-translate-key="landing.screenshots.lobby">Lobby do jogo</span>
+                    </div>
+                </div>
+                <button class="carousel-btn next" aria-label="Próximo"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="carousel-dots"></div>
+        </section>
+
+        <section id="rules">
+            <h2 data-translate-key="footer.rules">Regras do Jogo Sequence</h2>
+            <div data-translate-content-key="content_rules_expanded">
+                <p>Sequence é um jogo que mistura estratégia e sorte. O objetivo é simples, mas dominá-lo exige atenção e planejamento. Abaixo estão as regras fundamentais para você começar a jogar.</p>
+                <h3><i class="fas fa-bullseye"></i> Objetivo do Jogo</h3>
+                <p>O objetivo é ser o primeiro jogador ou equipe a formar o número necessário de "sequências". Uma sequência é uma linha contínua de 5 fichas da mesma cor no tabuleiro, que pode ser horizontal, vertical ou diagonal.</p>
+                <ul>
+                    <li><strong>Jogando com 2 Equipes:</strong> A primeira equipe a formar <strong>2 sequências</strong> vence.</li>
+                    <li><strong>Jogando com 3 Equipes:</strong> A primeira equipe a formar <strong>1 sequência</strong> vence.</li>
+                </ul>
+                <h3><i class="fas fa-hand-pointer"></i> Sua Vez de Jogar</h3>
+                <p>Em cada turno, um jogador realiza três ações simples:</p>
+                <ol>
+                    <li><strong>Escolha uma carta da sua mão:</strong> Selecione a carta que corresponde a um espaço livre no tabuleiro onde você deseja colocar sua ficha.</li>
+                        <li><strong>Coloque sua ficha:</strong> Clique no espaço correspondente no tabuleiro para posicionar uma ficha da cor da sua equipe.</li>
+                    <li><strong>Compre uma nova carta:</strong> Após jogar, você deve comprar uma nova carta do baralho. Se esquecer de comprar antes do próximo jogador, você perde o direito de fazê-lo e joga com uma carta a menos.</li>
+                </ol>
+                <h3><i class="fas fa-magic"></i> Os Valetes</h3>
+                <p>Os Valetes são as cartas mais poderosas do jogo e podem mudar completamente o rumo de uma partida.</p>
+                <ul>
+                    <li><strong>Valetes de Dois Olhos (<i class="fas fa-club black"></i>, <i class="fas fa-diamond red"></i>):</strong> São "coringas". Você pode usar um Valete de dois olhos para colocar sua ficha em <strong>QUALQUER</strong> espaço livre no tabuleiro, sendo uma peça chave para completar uma sequência ou bloquear um oponente.</li>
+                    <li><strong>Valetes de Um Olho (<i class="fas fa-spade black"></i>, <i class="fas fa-heart red"></i>):</strong> São "removedores". Você pode usar um Valete de um olho para remover <strong>QUALQUER</strong> ficha de um oponente do tabuleiro, desde que essa ficha não faça parte de uma sequência já completa.</li>
+                </ul>
+                <h3><i class="fas fa-flag-checkered"></i> Elementos Importantes do Tabuleiro</h3>
+                <p>Os quatro cantos do tabuleiro são espaços livres e funcionam como um coringa permanente para todos os jogadores. Eles podem ser usados como a primeira ou a última ficha de uma sequência, permitindo que você complete uma linha com apenas 4 fichas da sua cor.</p>
+            </div>
+        </section>
+
+        <section id="tips" class="section-highlight">
+            <h2 data-translate-key="landing.tips.title">Dicas de Estratégia</h2>
+            <div data-translate-content-key="content_tips">
+                <p>Quer melhorar seu jogo? Aqui estão algumas dicas rápidas para iniciantes e jogadores intermediários:</p>
+                <ul>
+                    <li><strong>Controle o Centro:</strong> O centro do tabuleiro oferece mais possibilidades de formar sequências em múltiplas direções. Tente dominar esta área desde o início.</li>
+                    <li><strong>Jogue na Defensiva:</strong> Fique de olho nas jogadas dos seus oponentes. Às vezes, usar seu turno para bloquear uma sequência inimiga de 4 fichas é mais importante do que avançar com a sua própria.</li>
+                    <li><strong>Use os Valetes com Sabedoria:</strong> Não gaste seus Valetes na primeira oportunidade. Guarde os Valetes de dois olhos para completar uma sequência ou para uma jogada crítica. Use os de um olho para quebrar sequências quase completas do adversário.</li>
+                    <li><strong>Cuidado com as "Cartas Mortas":</strong> Se os dois espaços de uma carta que você possui já estão ocupados, ela se torna inútil. No nosso jogo, você pode trocá-la durante o seu turno para não perder uma jogada.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="ai-logic">
+            <h2 data-translate-key="aiDocsTitle">Como a IA Pensa</h2>
+            
+            <p data-translate-key="aiDocsContent.intro"></p>
+
+            <h3><i class="fas fa-brain"></i> <span data-translate-key="aiDocsContent.decisionHierarchyTitle">Hierarquia de Decisão</span></h3>
+            <p data-translate-key="aiDocsContent.decisionHierarchyIntro"></p>
+            <ol data-translate-key="aiDocsContent.decisionHierarchyList"></ol>
+
+            <h3><i class="fas fa-user-secret"></i> <span data-translate-key="aiDocsContent.playerAdaptationTitle">Adaptação ao Jogador</span></h3>
+            <p data-translate-key="aiDocsContent.playerAdaptationIntro"></p>
+            <ul data-translate-key="aiDocsContent.playerAdaptationList"></ul>
+
+            <h3><i class="fas fa-chess-knight"></i> <span data-translate-key="aiDocsContent.predictiveThinkingTitle">Pensamento Preditivo</span></h3>
+            <p data-translate-key="aiDocsContent.predictiveThinkingP1"></p>
+            <blockquote class="ai-quote" data-translate-key="aiDocsContent.predictiveThinkingP2"></blockquote>
+            <p data-translate-key="aiDocsContent.predictiveThinkingP3"></p>
+
+            <h3><i class="fas fa-microchip"></i> <span data-translate-key="aiDocsContent.otherIntelligencesTitle">Outras Inteligências</span></h3>
+            <ul data-translate-key="aiDocsContent.otherIntelligencesList"></ul>
+
+            <p class="ai-outro" data-translate-key="aiDocsContent.outro"></p>
+        </section>
+
+        <section id="faq">
+            <h2 data-translate-key="landing.faq.title">Perguntas Frequentes</h2>
+            <div class="faq-content">
+                <details class="accordion-item" name="faq-group" open>
+                    <summary>
+                        <i class="fas fa-gamepad"></i>
+                        <span data-translate-key="landing.faq.q1">Como jogar Sequence online grátis?</span>
+                        <i class="fas fa-chevron-down arrow-icon"></i>
+                    </summary>
+                    <div class="detail-body">
+                        <p data-translate-key="landing.faq.a1">Acesse Row 5 Online, clique em "Entrar no Lobby e Jogar", crie uma sala ou entre em uma partida aleatória. Sem download, sem cadastro obrigatório. Jogue direto no navegador em qualquer dispositivo.</p>
+                    </div>
+                </details>
+                <details class="accordion-item" name="faq-group">
+                    <summary>
+                        <i class="fas fa-users"></i>
+                        <span data-translate-key="landing.faq.q2">Posso jogar Sequence online com amigos?</span>
+                        <i class="fas fa-chevron-down arrow-icon"></i>
+                    </summary>
+                    <div class="detail-body">
+                        <p data-translate-key="landing.faq.a2">Sim! Crie uma sala privada e compartilhe o código com seus amigos. Você pode jogar com 2 a 12 jogadores em equipes de 2 ou 3.</p>
+                    </div>
+                </details>
+                <details class="accordion-item" name="faq-group">
+                    <summary>
+                        <i class="fas fa-mobile-alt"></i>
+                        <span data-translate-key="landing.faq.q3">O Sequence está disponível como aplicativo?</span>
+                        <i class="fas fa-chevron-down arrow-icon"></i>
+                    </summary>
+                    <div class="detail-body">
+                        <p data-translate-key="landing.faq.a3">Row 5 Online é um Progressive Web App (PWA) que pode ser instalado no Android, iOS e desktop. Funciona offline e tem experiência de app nativo.</p>
+                    </div>
+                </details>
+                <details class="accordion-item" name="faq-group">
+                    <summary>
+                        <i class="fas fa-user-plus"></i>
+                        <span data-translate-key="landing.faq.q4">Preciso criar conta para jogar?</span>
+                        <i class="fas fa-chevron-down arrow-icon"></i>
+                    </summary>
+                    <div class="detail-body">
+                        <p data-translate-key="landing.faq.a4">Não é obrigatório. Você pode jogar online usando apenas um nome. Porém, criar conta salva seu progresso, ranking e histórico de partidas.</p>
+                    </div>
+                </details>
+                <details class="accordion-item" name="faq-group">
+                    <summary>
+                        <i class="fas fa-people-group"></i>
+                        <span data-translate-key="landing.faq.q5">Quantos jogadores podem jogar ao mesmo tempo?</span>
+                        <i class="fas fa-chevron-down arrow-icon"></i>
+                    </summary>
+                    <div class="detail-body">
+                        <p data-translate-key="landing.faq.a5">De 2 a 12 jogadores divididos em 2 ou 3 equipes. Também é possível jogar sozinho contra a inteligência artificial com vários níveis de dificuldade.</p>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2 data-translate-key="footer.contact">Entre em Contato</h2>
+            <div data-translate-content-key="content_contact">
+                <p>
+                    Tem alguma sugestão, encontrou um bug ou apenas quer dizer olá? Adoraríamos ouvir de você!
+                </p>
+                <p>
+                    A melhor forma de entrar em contato é através do seguinte e-mail:
+                    <strong><a href="mailto:wendellaraujodev@gmail.com">wendellaraujodev@gmail.com</a></strong>
+                </p>
+                <p>
+                    Tentaremos responder o mais rápido possível. Obrigado por jogar!
+                </p>
+            </div>
+            <div class="contact-actions">
+                <a href="game.html?action=support" class="secondary-button">
+                    <i class="fas fa-envelope"></i>
+                    <span data-translate-key="landing.contact.supportBtn">Falar com Suporte</span>
+                </a>
+            </div>
+        </section>
+
+        <a href="game.html" class="cta-button">
+            <i class="fas fa-gamepad-alt"></i>
+            <span data-translate-key="back_to_game">Entrar no Lobby e Jogar</span>
+        </a>
+    </main>
+
+    <footer>
+        <div class="dev-container">
+            <a href="https://wendell-araujo.web.app/" target="_blank" rel="noopener noreferrer"><img src="assets/img/logo-wa.webp" alt="Logo do desenvolvedor Wendell Araujo Dev" width="40"></a> 
+            <span>Desenvolvido por <a href="http://wendell-araujo.web.app/" target="_blank" rel="noopener noreferrer">Wendell Araujo Dev</a></span>
+        </div>
+        <p>
+          © 2025 Row 5 Online <br>
+          <a href="#features" data-translate-key="footer.features">Recursos Principais</a> |
+          <a href="#about" data-translate-key="footer.about">Sobre</a> | 
+          <a href="#rules" data-translate-key="footer.rules">Regras do Jogo</a> | 
+          <a href="#tips" data-translate-key="footer.tips">Dicas de Estratégia</a> |
+          <a href="#ai-logic" data-translate-key="footer.aiLogic">Como a IA Pensa</a> |
+          <a href="#faq" data-translate-key="landing.faq.title">Perguntas Frequentes</a> |
+          <a href="#contact" data-translate-key="footer.contact">Contato</a> | 
+          <a href="privacy.html" data-translate-key="footer.privacy">Política de Privacidade</a>
+        </p>
+    </footer>
+    <script type="application/javascript" src="script/translate.js?version=3.1.95" defer></script>
+    <script type="application/javascript" src="script/landing.js?version=3.1.95" defer></script>
+    <script type="application/javascript" src="script/cookie-consent.js?version=3.1.95" defer></script>
+
+    <script>
+        window.addEventListener('load', function() {
+            if (window.adsbygoogle) {
+                try {
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                } catch (e) {
+                    console.error("Ads error:", e);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

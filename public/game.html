@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" /> 
+    
+    <meta name="description" content="Sala de Jogo Row 5 Online. Entre na partida, jogue suas cartas e faça sequências no tabuleiro virtual. Multiplayer em tempo real."/>
+    <meta name="keywords" content="sequence online, play sequence online, sequence game online free, sequence board game multiplayer, play sequence with friends, sequence card game online, row 5 online, jogo sequence online, jogar sequence gratis, juego sequence online gratis" />
+    <meta name="author" content="Wendell Araujo Dev" />
+    <link rel="canonical" href="https://YOUR_DOMAIN/game.html" />
+    <link rel="alternate" hreflang="pt" href="https://YOUR_DOMAIN/game.html?lang=pt" />
+    <link rel="alternate" hreflang="en" href="https://YOUR_DOMAIN/game.html?lang=en" />
+    <link rel="alternate" hreflang="es" href="https://YOUR_DOMAIN/game.html?lang=es" />
+    <link rel="alternate" hreflang="x-default" href="https://YOUR_DOMAIN/game.html" />
+
+    <title>Jogar Row 5 Online – Tabuleiro Multiplayer Grátis (2 a 12 Jogadores)</title>
+    
+    <meta name="theme-color" content="#1a252f" />
+    <meta name="view-transition" content="same-origin" />
+    <link rel="manifest" href="manifest.json?version=2.0.4" />
+    
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Row 5 Online" />
+    <meta name="apple-mobile-web-app-title" content="Row 5 Online" />
+    <meta name="msapplication-starturl" content="/game.html" />
+
+    <meta property="og:title" content="Jogando Row 5 Online" />
+    <meta property="og:description" content="Estou jogando Row 5 Online! Venha jogar também neste tabuleiro virtual gratuito." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://YOUR_DOMAIN/game.html" />
+    <meta property="og:image" content="https://YOUR_DOMAIN/assets/img/thumb.png" />
+    <meta property="og:site_name" content="Row 5 Online" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Row 5 Online – Tabuleiro Virtual" />
+    <meta name="twitter:description" content="Partida de Row 5 em andamento. Jogo de estratégia e sorte multiplayer." />
+    <meta name="twitter:image" content="https://YOUR_DOMAIN/assets/img/thumb.png" />
+
+    <link rel="apple-touch-icon" sizes="57x57" href="ios/57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="ios/60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="ios/72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="ios/76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="ios/114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="ios/120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="ios/144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="ios/152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="ios/180.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="ios/512.png" />
+    <link rel="shortcut icon" href="assets/img/logo.webp" />
+
+    <link rel="stylesheet" href="style/reset.css?v=4" />
+    <link rel="stylesheet" href="style/style.css?version=3.1.95" />
+    <link rel="stylesheet" href="style/animations.css?version=3.1.95" />
+    <link rel="stylesheet" href="style/cookie-consent.css?version=3.1.95" />
+    <link href="lib/fontawesome-pro-6.7.2-web/css/all.min.css" rel="stylesheet" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "Row 5 Online - Sala de Jogo",
+        "description": "Interface de jogo do Row 5 Online. Tabuleiro interativo multiplayer.",
+        "genre": ["Board Game", "Strategy Game"],
+        "playMode": "MultiPlayer",
+        "applicationCategory": "Game",
+        "operatingSystem": "Any",
+        "url": "https://YOUR_DOMAIN/game.html",
+        "author": {
+          "@type": "Person",
+          "name": "Wendell Araujo"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "BRL",
+          "category": "free"
+        }
+      }
+    </script>
+
+    <script async
+      data-ad-client="YOUR_ADSENSE_CLIENT_ID"
+      data-ad-frequency-hint="60s"
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js">
+    </script>
+    <script>
+      window.adsbygoogle = window.adsbygoogle || [];
+      var adBreak = adConfig = function(o) { adsbygoogle.push(o); };
+      var H5_ADS_ENABLED = true;
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
+    <script src="script/firebaseConfig.js"></script>
+    <script src="script/translate.js?version=3.1.95"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/pwacompat@2.0.8/pwacompat.min.js" integrity="sha384-uONtBTCBzHKF84F6XvyC8S0gL8HTkAPeCyBNvfLfsqHh+Kd6s/kaS4BdmNQ5ktp1" crossorigin="anonymous"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=YOUR_MEASUREMENT_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'YOUR_MEASUREMENT_ID');
+    </script>
+</head>
+  <body>
+    <noscript>
+      <h1>Bem-vindo ao Row 5 Online!</h1>
+      <p>Para jogar, você precisa habilitar o JavaScript no seu navegador.</p>
+      <p>Jogue o clássico jogo de tabuleiro Row 5 com amigos e família online. Crie salas, junte-se a partidas e desafie jogadores de todo o mundo.</p>
+    </noscript>
+    <div class="loading">
+      <div class="loading-content">
+        <div class="row-cards" aria-hidden="true">
+          <div class="loading-card card-r">R</div>
+          <div class="loading-card card-o">O</div>
+          <div class="loading-card card-w">W</div>
+        </div>
+        <div class="logo-number" aria-hidden="true">5</div>
+        <p class="loading-text" data-translate-key="loading">Carregando...</p>
+      </div>
+    </div>
+
+    <div id="lobby">
+      <div id="lobby-container">
+        <div id="lobby-header">
+          <div>
+            <a href="index.html"><img class="logo-title" src="assets/img/logo.webp" alt="Logo Row 5" width="50" height="50"></a>
+            <h1 id="title">Row 5 Online</h1>
+          </div>
+        </div>
+  
+        <div id="name-options" class="options" style="display:none;">
+          <label for="player-name-input" class="small" data-translate-key="nameAndAvatar">Nome e Avatar:</label>
+          <div class="avatar-selector">
+            <div id="avatar-dropdown-container" class="avatar-dropdown">
+              <input
+                type="text"
+                id="player-name-input"
+                data-translate-placeholder-key="playerNamePlaceholder"
+                aria-label="Digite seu nome"
+              />
+              <div id="avatar-dropdown-selected" class="avatar-dropdown-selected" data-translate-aria-label-key="selectAvatar">
+                <img
+                  src="https://api.dicebear.com/8.x/adventurer/svg?seed=1" alt="Avatar 1"
+                  id="avatar-option"
+                  data-avatar-id="1"
+                />
+                <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
+              </div>
+              <div id="avatar-dropdown-panel" class="avatar-dropdown-panel">
+              </div>
+            </div>
+          </div>
+        </div>      
+
+        <div id="auth-section" style="display:none;">
+          <div id="auth-loading" style="text-align:center;padding:10px;"><i class="fas fa-spinner fa-spin" style="font-size:1.2em;color:var(--color-secondary);"></i></div>
+          <button id="auth-login-btn" style="display:none;">
+            <i class="fas fa-right-to-bracket"></i>
+            <span data-translate-key="auth.lobbyLoginBtn">Entrar / Criar Conta</span>
+          </button>
+          <div id="auth-user-info" style="display:none;">
+            <div class="auth-user-identity" id="auth-avatar-btn">
+              <div class="auth-avatar-wrapper">
+                <img id="auth-lobby-avatar-img" class="auth-lobby-avatar" src="">
+                <span class="auth-avatar-edit-icon"><i class="fas fa-pen"></i></span>
+              </div>
+              <span id="auth-username-display"></span>
+            </div>
+            <div class="auth-user-actions">
+              <button id="auth-friends-btn" title="Amigos"><i class="fas fa-users"></i> <span id="friend-requests-badge" class="badge" style="display:none;">0</span></button>
+              <button id="auth-ranking-btn" title="Ranking"><i class="fas fa-trophy"></i></button>
+              <button id="auth-logout-btn" title="Sair"><i class="fas fa-right-from-bracket"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div id="lobby-modes">
+          <div id="online-options">
+            <label id="online-label">
+              <i class="fad fa-globe-wifi"></i>
+              <strong data-translate-key="onlineMode">Modo online</strong>
+            </label>
+    
+            <button id="create-game-btn" data-translate-title-key="createRoomTitle">
+              <i class="fas fa-plus"></i>
+              <span data-translate-key="createRoom">Criar sala</span>
+            </button>
+    
+            <div id="join-game-options">
+              <input type="text" id="game-id-input" data-translate-placeholder-key="roomCodePlaceholder" />
+              <button id="join-game-btn" data-translate-title-key="joinRoomTitle">
+                <i class="fas fa-door-open"></i>
+                <span data-translate-key="joinRoom">Entrar na sala</span>
+              </button>
+            </div>
+    
+            <button id="find-random-game-btn" data-translate-title-key="findRandomTitle">
+              <i class="fas fa-dice"></i>
+              <span data-translate-key="findRandom">Entrar em partida aleatória</span>
+            </button>
+    
+            <button id="view-online-players-btn" data-translate-title-key="lobby.viewOnlinePlayersTitle">
+              <i class="fas fa-globe"></i>
+              <span data-translate-key="lobby.viewOnlinePlayers">Lobby Online</span>
+            </button>
+          </div>
+    
+          <div id="practice-game-options">
+            <label id="practice-label">
+              <i class="fad fa-wifi-slash"></i>
+              <strong data-translate-key="practiceMode">Modo Offline</strong>
+            </label>
+            <div id="game-mode-options" class="options">
+            <label for="player-count-select" class="small" data-translate-key="gameMode">Modo de jogo:</label>
+            <select id="player-count-select" aria-label="Modo de jogo">
+              <option value="0" selected disabled data-translate-key="selectGameMode">Selecione o modo de jogo</option>
+              <option value="2.2" data-translate-key="gameModes.2p">2 Jogadores (1 vs 1)</option>
+              <option value="3.3" data-translate-key="gameModes.3p">3 Jogadores (1 vs 1 vs 1)</option>
+              <option value="4.2" data-translate-key="gameModes.4p">4 Jogadores (2 vs 2)</option>
+              <option value="6.2" data-translate-key="gameModes.6p_2teams">6 Jogadores (3 vs 3)</option>
+              <option value="6.3" data-translate-key="gameModes.6p_3teams">6 Jogadores (2 vs 2 vs 2)</option>
+              <option value="8.2" data-translate-key="gameModes.8p">8 Jogadores (4 vs 4)</option>
+              <option value="9.3" data-translate-key="gameModes.9p">9 Jogadores (3 vs 3 vs 3)</option>
+              <option value="10.2" data-translate-key="gameModes.10p">10 Jogadores (5 vs 5)</option>
+              <option value="12.2" data-translate-key="gameModes.12p_2teams">12 Jogadores (6 vs 6)</option>
+              <option value="12.3" data-translate-key="gameModes.12p_3teams">12 Jogadores (4 vs 4 vs 4)</option>
+            </select>
+          </div>
+    
+            <div id="difficulty-options" class="options">
+              <label for="difficulty-select" class="small" data-translate-key="difficulty">Dificuldade:</label>
+              <select id="difficulty-select" aria-label="Dificuldade">
+                <option value="0" selected disabled data-translate-key="selectDifficulty">Selecione a dificuldade</option>
+                <option value="easy" data-translate-key="difficultyOptions.easy">Fácil</option>
+                <option value="medium" data-translate-key="difficultyOptions.medium">Médio</option>
+                <option value="hard" data-translate-key="difficultyOptions.hard">Difícil</option>
+                <option value="expert" data-translate-key="difficultyOptions.expert">Especialista</option>
+              </select>
+            </div>
+            <button id="start-practice-btn" data-translate-title-key="newBotGameTitle">
+              <i class="fas fa-robot"></i>
+              <span data-translate-key="newBotGame">Novo jogo</span>
+            </button>
+            <button id="join-practice-btn" data-translate-title-key="continueBotGameTitle">
+              <i class="fas fa-play"></i>
+              <span data-translate-key="continueBotGame">Continuar jogo</span>
+            </button>
+          </div>
+        </div>
+  
+        <div id="lobby-utils">
+          <button class="config-btn" data-translate-title-key="settings">
+            <i class="fas fa-cog"></i>
+            <span data-translate-key="settings">Configurações</span>
+          </button>
+          <button id="help-btn">
+            <i class="far fa-circle-info"></i>
+            <span data-translate-key="rules">Regras</span>
+          </button>
+        </div>
+
+        <div id="installApp">
+          <button
+            id="installAppButton"
+            aria-label="Instalar app"
+            data-translate-title-key="installApp"
+          ></button>
+        </div>
+        <div class="connection-status-container">
+          <div id="connection-status"></div>
+          <div id="connection-status-info"></div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="dev-container">
+          <a href="https://wendell-araujo.web.app/" target="_blank" rel="noopener noreferrer"><img src="assets/img/logo-wa.webp" alt="Logo do deseenvolvedor Wendell Araujo Dev" width="40"></a> 
+          <span>Desenvolvido por <a href="http://wendell-araujo.web.app/" target="_blank" rel="noopener noreferrer">Wendell Araujo Dev</a></span>
+        </div>
+        <p>
+          © 2025 Row 5 Online <br>
+          <a href="index.html#features" data-translate-key="footer.features">Recursos Principais</a> |
+          <a href="index.html#about" data-translate-key="footer.about">Sobre</a> | 
+          <a href="index.html#rules" data-translate-key="footer.rules">Regras do Jogo</a> | 
+          <a href="index.html#ai-logic" data-translate-key="footer.aiLogic">Como a IA Pensa</a> | 
+          <a href="index.html#tips" data-translate-key="footer.tips">Dicas de Estratégia</a> |
+          <a href="index.html#faq" data-translate-key="landing.faq.title">Perguntas Frequentes</a> |
+          <a href="index.html#contact" data-translate-key="footer.contact">Contato</a> |
+          <a href="privacy.html" data-translate-key="footer.privacy">Política de Privacidade</a>
+        </p>
+      </footer>
+    </div>
+
+    <div id="game-container" style="display: none">
+        <div id="board"></div>
+
+      <div id="player-info">
+        <div class="persistent-game-info" style="display: none">
+          <div>
+            Sala: <strong class="game-id-text"></strong>
+            <button class="copy-id-btn" data-translate-title-key="copyRoomCode">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+          <button class="spectator-count-btn" style="display:none;" data-translate-title-key="spectator.listTitle">
+            <i class="fas fa-eye"></i> <span class="spectator-count-num">0</span>
+          </button>
+          <button class="players-list-btn" data-translate-title-key="playersList">
+            <i class="fas fa-users"></i> <span class="players-count-num"></span>
+          </button>
+          <button class="session-history-btn" data-translate-title-key="sessionHistory.title" style="display:none;" onclick="showSessionHistory()">
+            <i class="fas fa-clock-rotate-left"></i>
+          </button>
+          <button class="mobile-chat-btn" title="Chat">
+            <i class="fas fa-message"></i>
+          </button>
+          <button class="config-btn" data-translate-title-key="settings">
+            <i class="fas fa-cog"></i>
+          </button>
+          <button class="help-btn" data-translate-title-key="gameRules">
+            <i class="far fa-circle-info"></i>
+          </button>
+          <button id="hint-btn" class="action-btn" title="Pedir Dica (IA)">
+            <i class="fas fa-lightbulb"></i>
+            <span id="hint-count" class="badge-counter">3</span>
+          </button>
+          <button class="leave-game-btn" data-translate-title-key="leaveGame">
+            <i class="fas fa-right-from-bracket"></i>
+          </button>
+        </div>
+
+        <div id="turn-timer-container">
+          <div class="timer-badge">
+              <i class="fas fa-stopwatch"></i> <span id="turn-timer-value">--</span>
+          </div>
+      </div>
+
+        <h2 id="current-player-text" data-translate-key="waiting">Aguardando...</h2>
+
+        <div id="game-message" data-translate-key="welcome" class="game-message-box">Bem-vindo ao Row 5!</div>
+        <div id="team-info"></div>
+
+        <h3 class="hand-title" data-translate-key="yourHand">Sua Mão:</h3>
+        <div class="cards-container">
+          <div id="chip-stack" class="pilha-fichas" style="display:none;">
+            <div class="ficha-stack"></div>
+            <div class="ficha-stack"></div>
+            <div class="ficha-stack"></div>
+            <div class="ficha-stack"></div>
+            <div class="ficha-stack"></div>
+          </div>
+          <div id="player-hand"></div>
+          <div class="deck-discard-container">
+            <div id="deck-pile" data-translate-title-key="buyCard"></div>
+            <div id="discard-pile" data-translate-title-key="lastCardPlayedTitle"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="chat-container">
+      <div class="chat-header">
+        <h3 data-translate-key="gameChat">Chat do Jogo</h3>
+        <button id="hide-chat-btn" data-translate-title-key="closeChat">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+      <div id="chat-messages"></div>
+      <div id="chat-input-area">
+        <input
+          type="text"
+          id="chat-input"
+          data-translate-placeholder-key="chatPlaceholder"
+        />
+        <button id="send-chat-btn" data-translate-title-key="sendChatMessage">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+    <div class="chat-btn-container">
+      <button id="show-chat-btn" data-translate-title-key="openChat">
+        <i class="fas fa-message"></i> <span data-translate-key="chat">Chat</span>
+      </button>
+    </div>
+
+    <div id="team-selection-modal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <div class="persistent-game-info">
+          <div>
+            Sala: <strong class="game-id-text"></strong>
+            <button class="copy-id-btn" data-translate-title-key="copyRoomCode">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+          <button class="mobile-chat-btn" title="Chat">
+            <i class="fas fa-message"></i>
+          </button>
+          <button class="config-btn" data-translate-title-key="settings">
+            <i class="fas fa-cog"></i>
+          </button>
+          <button class="help-btn" data-translate-title-key="gameRules">
+            <i class="far fa-circle-info"></i>
+          </button>
+          <button class="leave-game-btn" data-translate-title-key="leaveGame">
+            <i class="fas fa-right-from-bracket"></i>
+          </button>
+        </div>
+        <h2 data-translate-key="chooseYourTeam">Escolha sua Equipe</h2>
+        <div class="player-count-info"></div>
+        <p data-translate-key="teamSelectionInstructions">
+          Os jogadores devem se dividir entre as equipes. O anfitrião iniciará a
+          partida quando as equipes estiverem completas e balanceadas.
+        </p>
+        <div id="teams-container"></div>
+        <div id="host-controls-container">
+        </div>
+        <div id="start-game-container"></div>
+      </div>
+    </div>
+    <script src="script/auth.js?version=3.1.95"></script>
+    <script src="script/friends.js?version=3.1.95"></script>
+    <script src="script/ranking.js?version=3.1.95"></script>
+    <script src="script/animations.js?version=3.1.95"></script>
+    <script src="script/main.js?version=3.1.95"></script>
+    <script src="script/bot.js?version=3.1.95"></script>
+    <script src="script/cookie-consent.js?version=3.1.95"></script>
+  </body>
+</html>
